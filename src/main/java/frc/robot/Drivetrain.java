@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Timer;
@@ -60,14 +61,19 @@ public class Drivetrain extends SubsystemBase{
     navx.reset();
     /* Here we use SwerveDrivePoseEstimator so that we can fuse odometry readings. The numbers used
   below are robot specific, and should be tuned. */
-    m_poseEstimator =
-      new SwerveDrivePoseEstimator(
-          Rotation2d.fromDegrees(navx.getAngle()),
-          initialPose,
-          m_kinematics,
-          VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
-          VecBuilder.fill(Units.degreesToRadians(0.01)),
-          VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
+  m_poseEstimator =
+    new SwerveDrivePoseEstimator(
+        m_kinematics,
+        Rotation2d.fromDegrees(navx.getAngle()),
+        new SwerveModulePosition[] {
+          m_frontLeft.getPosition(),
+          m_frontRight.getPosition(),
+          m_backLeft.getPosition(),
+          m_backRight.getPosition()
+        },
+        new Pose2d(),
+        VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+        VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
   }
 
   /**
@@ -103,10 +109,12 @@ public class Drivetrain extends SubsystemBase{
   public void updateOdometry() {
     m_poseEstimator.update(
         Rotation2d.fromDegrees(navx.getAngle()),
-        m_frontLeft.getState(),
-        m_frontRight.getState(),
-        m_backLeft.getState(),
-        m_backRight.getState());
+        new SwerveModulePosition[] {
+          m_frontLeft.getPosition(),
+          m_frontRight.getPosition(),
+          m_backLeft.getPosition(),
+          m_backRight.getPosition()
+        });
 
 
     

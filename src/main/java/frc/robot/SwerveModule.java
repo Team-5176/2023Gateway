@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
@@ -115,6 +116,11 @@ public class SwerveModule {
     return new SwerveModuleState(getdriveVelocity(), m_turningEncoder.getRotation());
   }
 
+  public SwerveModulePosition getPosition(){
+    double rawEncoderOutput = -m_driveMotor.getSelectedSensorPosition(); // output is in units per 100ms
+    double rotationsWheel = ((rawEncoderOutput * 10) / kEncoderResolution) * (1/6.67) * kWheelRadius * 3.14159 * 2; // gear ratio is 6.67:1
+    return new SwerveModulePosition(rotationsWheel, m_turningEncoder.getRotation());
+  }
   /**
    * Sets the desired state for the module.
    *

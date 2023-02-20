@@ -21,7 +21,7 @@ public class ManipulatorCommand extends CommandBase{
             manipulator.increaseElevator(-0.5);
         }
         else{
-            manipulator.increaseElevator(0.0);
+            manipulator.increaseElevator(0.0); 
         }
 
         if(Robot.m_controller.getRawButton(Constants.CLOSE_GRABBER)){

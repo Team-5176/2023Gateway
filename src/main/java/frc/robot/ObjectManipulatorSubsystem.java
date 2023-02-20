@@ -83,7 +83,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
         //if(elevatorSetPoint + amount < Constants.ELEVATOR_MAX && elevatorSetPoint + amount > Constants.ELEVATOR_MIN){
         //    elevatorSetPoint += amount;
         //}
-        elevatorNeo.set(amount);
+        elevatorNeo.set(-amount);
     }
 
     public void manualExtend(double amount){
@@ -127,7 +127,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
      */
     public double getHeight(){
         double height = Constants.ELEVATOR_START_HEIGHT;
-        height += elevatorEncoder.getPosition() * (1.0/12.0); // gearing ratio is currently 12:1
+        height += elevatorEncoder.getPosition() * (1.0/11.2) * 0.1333; // gearing ratio is currently 12:1
         // TODO: add another constant multiplier for converting rotations to chain length movement
         return height;
     }
@@ -151,6 +151,28 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
 
         double extendorPID = extendorPIDController.calculate(getExtension(), extendorSetPoint);
         // uncomment this when ready to actually run the mechanism
+
+        double elevatorCommand = 0;
+        if(elevatorSetPoint > getHeight()){
+            elevatorCommand = 0.7;
+            if(getHeight() > Constants.ELEVATOR_MAX - Constants.ELEVATOR_SLOW){
+                elevatorCommand = 0.4;
+            }
+            if(getTopLimitSwitch()){
+                elevatorCommand = 0.0;
+            }
+        }else if(elevatorSetPoint < getHeight()){
+            elevatorCommand  = -0.5;
+            if(getHeight() < Constants.ELEVATOR_MIN + Constants.ELEVATOR_SLOW){
+                elevatorCommand = -0.2;
+            }
+            if(getBottomLimitSwitch()){
+                elevatorCommand = 0.0;
+            }
+        }
+
+        
+        //elevatorNeo.set(-elevatorCommand);
         //elevatorNeo.set(elevatorFeedforward + elevatorPID);
         //extendorNeo.set(extendorPID);
         

@@ -58,8 +58,9 @@ public final class Constants {
     // object manipulator constants
     public static final int ELEVATOR_ID = 9;
     public static final int EXTENDOR_ID = 10;
-    public static final double ELEVATOR_MAX = 1.3;
+    public static final double ELEVATOR_MAX = 0.954278;
     public static final double ELEVATOR_MIN = 0;
+    public static final double ELEVATOR_SLOW = 0.1;
     public static final int TOP_LIMIT_SWITCH_DIO_PIN = 0;
     public static final int BOTTOM_LIMIT_SWITCH_DIO_PIN = 1;
 
