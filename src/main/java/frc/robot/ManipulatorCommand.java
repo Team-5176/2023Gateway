@@ -16,9 +16,11 @@ public class ManipulatorCommand extends CommandBase{
         SmartDashboard.putNumber("test???", 74);
         if(Robot.m_controller.getRawButton(Constants.ELEVATOR_UP)){
             manipulator.increaseElevator(0.5);
+            manipulator.manualElevatorControl = true;
         }
         else if(Robot.m_controller.getRawButton(Constants.ELEVATOR_DOWN)){
             manipulator.increaseElevator(-0.5);
+            manipulator.manualElevatorControl = true;
         }
         else{
             manipulator.increaseElevator(0.0); 
@@ -43,6 +45,12 @@ public class ManipulatorCommand extends CommandBase{
             manipulator.manualExtend(-0.3);
         } else{
             manipulator.manualExtend(0.0);
+        }
+        if(Robot.m_copilot_controller.getRawButton(Constants.MOVE_ELEVATOR_MAX)){
+            manipulator.setElevator(Constants.ELEVATOR_MAX + 0.1);
+        }
+        if(Robot.m_copilot_controller.getRawButton(Constants.MOVE_ELEVATOR_MIN)){
+            manipulator.setElevator(Constants.ELEVATOR_MIN - 0.1);
         }
         //$if(Robot.m_controller)
     }

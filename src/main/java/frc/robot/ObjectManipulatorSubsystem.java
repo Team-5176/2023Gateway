@@ -75,27 +75,34 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     }
 
     // These setpoints are in meters from their resting position
-    private double elevatorSetPoint = 0;
+    private double elevatorSetPoint = Constants.ELEVATOR_MAX + 0.1;
     private double extendorSetPoint = 0;
 
+    public boolean manualElevatorControl = false;
 
     public void increaseElevator(double amount){
         //if(elevatorSetPoint + amount < Constants.ELEVATOR_MAX && elevatorSetPoint + amount > Constants.ELEVATOR_MIN){
         //    elevatorSetPoint += amount;
         //}
-        elevatorNeo.set(-amount);
+        
+        if(manualElevatorControl){
+            elevatorNeo.set(-amount);
+        }
+        
     }
 
     public void manualExtend(double amount){
         extendorNeo.set(amount);
     }
 
+    
     /**
      * sets elevator setpoint
      * @param height Elevator height in m, where 0 is all the way lowered
      */
     public void setElevator(double height){
         elevatorSetPoint = height;
+        manualElevatorControl = false;
     }
 
     /**
@@ -127,7 +134,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
      */
     public double getHeight(){
         double height = Constants.ELEVATOR_START_HEIGHT;
-        height += elevatorEncoder.getPosition() * (1.0/11.2) * 0.1333; // gearing ratio is currently 12:1
+        height += -elevatorEncoder.getPosition() * (1.0/11.2) * 0.1333; // gearing ratio is currently 12:1
         // TODO: add another constant multiplier for converting rotations to chain length movement
         return height;
     }
@@ -156,7 +163,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
         if(elevatorSetPoint > getHeight()){
             elevatorCommand = 0.7;
             if(getHeight() > Constants.ELEVATOR_MAX - Constants.ELEVATOR_SLOW){
-                elevatorCommand = 0.4;
+                elevatorCommand = 0.5;
             }
             if(getTopLimitSwitch()){
                 elevatorCommand = 0.0;
@@ -164,19 +171,22 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
         }else if(elevatorSetPoint < getHeight()){
             elevatorCommand  = -0.5;
             if(getHeight() < Constants.ELEVATOR_MIN + Constants.ELEVATOR_SLOW){
-                elevatorCommand = -0.2;
+                elevatorCommand = -0.3;
             }
             if(getBottomLimitSwitch()){
                 elevatorCommand = 0.0;
             }
         }
 
+        if(!manualElevatorControl){
+            elevatorNeo.set(-elevatorCommand);
+        }
         
-        //elevatorNeo.set(-elevatorCommand);
         //elevatorNeo.set(elevatorFeedforward + elevatorPID);
         //extendorNeo.set(extendorPID);
         
         // print useful information
+        SmartDashboard.putNumber("Elevator setpoint", elevatorSetPoint);
         SmartDashboard.putNumber("Elevator Height", getHeight());
         SmartDashboard.putNumber("Extension Distance", getExtension());
         SmartDashboard.putBoolean("Top Limit Switch State", getTopLimitSwitch());

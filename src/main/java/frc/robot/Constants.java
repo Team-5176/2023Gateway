@@ -61,6 +61,7 @@ public final class Constants {
     public static final double ELEVATOR_MAX = 0.954278;
     public static final double ELEVATOR_MIN = 0;
     public static final double ELEVATOR_SLOW = 0.1;
+    public static final double ELEVATOR_DEADZONE = 0.1;
     public static final int TOP_LIMIT_SWITCH_DIO_PIN = 0;
     public static final int BOTTOM_LIMIT_SWITCH_DIO_PIN = 1;
 
@@ -70,7 +71,7 @@ public final class Constants {
     public static final int PIVOT_SOLENOID_REVERSE = 0;
 
     // starting height in m of elevator, where 0 is all the way lowered with the bearing against the hardstop (currently set to a very rough estimate)
-    public static final double ELEVATOR_START_HEIGHT = 0.01;
+    public static final double ELEVATOR_START_HEIGHT = ELEVATOR_MAX;
 
     //pilot controller outputs
     public static final int ELEVATOR_UP = 2;
@@ -82,6 +83,10 @@ public final class Constants {
 
     public static final int EXTEND = 7;
     public static final int RETRACT = 8;
+
+    //copilot controllor
+    public static final int MOVE_ELEVATOR_MAX = 6;
+    public static final int MOVE_ELEVATOR_MIN = 5;
 
 
 }
