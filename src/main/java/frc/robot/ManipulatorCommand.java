@@ -39,10 +39,10 @@ public class ManipulatorCommand extends CommandBase{
             manipulator.pivotForward();
         }
         if(Robot.m_controller.getRawButton(Constants.EXTEND)){
-            manipulator.manualExtend(0.3);
+            manipulator.manualExtend(0.5);
         }
         else if(Robot.m_controller.getRawButton(Constants.RETRACT)){
-            manipulator.manualExtend(-0.3);
+            manipulator.manualExtend(-0.5);
         } else{
             manipulator.manualExtend(0.0);
         }

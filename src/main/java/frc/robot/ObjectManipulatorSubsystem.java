@@ -161,9 +161,9 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
 
         double elevatorCommand = 0;
         if(elevatorSetPoint > getHeight()){
-            elevatorCommand = 0.7;
+            elevatorCommand = 0.8;
             if(getHeight() > Constants.ELEVATOR_MAX - Constants.ELEVATOR_SLOW){
-                elevatorCommand = 0.5;
+                elevatorCommand = 0.6;
             }
             if(getTopLimitSwitch()){
                 elevatorCommand = 0.0;
