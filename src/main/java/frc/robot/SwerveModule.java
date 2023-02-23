@@ -101,7 +101,7 @@ public class SwerveModule {
   }
 
   private double getdriveVelocity(){
-    double rawEncoderOutput = -m_driveMotor.getSelectedSensorVelocity(); // output is in units per 100ms
+    double rawEncoderOutput = m_driveMotor.getSelectedSensorVelocity(); // output is in units per 100ms
     double rotationsPerSecondofWheel = ((rawEncoderOutput * 10) / kEncoderResolution) * (1/6.67); // gear ratio is 6.67:1
     return rotationsPerSecondofWheel * kWheelRadius * 3.14159 * 2; // speed of the wheel treads in meters/second
   }
@@ -117,8 +117,8 @@ public class SwerveModule {
   }
 
   public SwerveModulePosition getPosition(){
-    double rawEncoderOutput = -m_driveMotor.getSelectedSensorPosition(); // output is in units per 100ms
-    double rotationsWheel = ((rawEncoderOutput * 10) / kEncoderResolution) * (1/6.67) * kWheelRadius * 3.14159 * 2; // gear ratio is 6.67:1
+    double rawEncoderOutput = m_driveMotor.getSelectedSensorPosition(); // output is in units per 100ms
+    double rotationsWheel = ((rawEncoderOutput * 1) / kEncoderResolution) * (1/6.67) * kWheelRadius * 3.14159 * 2; // gear ratio is 6.67:1
     return new SwerveModulePosition(rotationsWheel, m_turningEncoder.getRotation());
   }
   /**
@@ -158,7 +158,7 @@ public class SwerveModule {
     SmartDashboard.putNumber(name + " voltage", m_driveMotor.getMotorOutputVoltage());
 
     //set motor powers
-    m_driveMotor.set(-(driveOutput + driveFeedforward));
+    m_driveMotor.set((driveOutput + driveFeedforward));
     m_turningMotor.set(ControlMode.PercentOutput, turnOutput + turnFeedforward);
     
   }

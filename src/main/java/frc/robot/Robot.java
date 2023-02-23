@@ -61,6 +61,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic(){
     CommandScheduler.getInstance().run();
+
   }
 
   @Override
@@ -70,7 +71,7 @@ public class Robot extends TimedRobot {
     //initiate swerve based on starting position specified in SmartDashboard. I rounded before converting to int just in case there are any double shenanigans
     m_swerve = new Drivetrain(availableStartPositions[(int)Math.round(SmartDashboard.getNumber("Starting position", 0))]);
     
-    auto.setRoute((int)Math.round(SmartDashboard.getNumber("Starting position", 0)));
+    //auto.setRoute((int)Math.round(SmartDashboard.getNumber("Starting position", 0)));
     //schedule the autonomous command
     auto.schedule();
   }
@@ -80,6 +81,14 @@ public class Robot extends TimedRobot {
     //auto();
     Vision.updatePosition(m_swerve.navx.getAngle());
     m_swerve.updateOdometry();
+    SmartDashboard.putNumber("Pos x", m_swerve.getPose().getX());
+    SmartDashboard.putNumber("Pos y", m_swerve.getPose().getY());
+    SmartDashboard.putNumber("Heading", m_swerve.navx.getAngle());
+  }
+
+  @Override
+  public void teleopInit(){
+    m_swerve.navx.reset();
   }
 
   @Override
@@ -87,8 +96,9 @@ public class Robot extends TimedRobot {
     driveWithJoystick(false);
     Vision.updatePosition(m_swerve.navx.getAngle());
     m_swerve.updateOdometry();
-
-    
+    SmartDashboard.putNumber("Pos x", m_swerve.getPose().getX());
+    SmartDashboard.putNumber("Pos y", m_swerve.getPose().getY());
+    SmartDashboard.putNumber("Heading", m_swerve.navx.getAngle());   
   }
 
 
@@ -115,23 +125,21 @@ public class Robot extends TimedRobot {
   private void driveWithJoystick(boolean fieldRelative) {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
-    final var xSpeed = -m_xspeedLimiter.calculate(getLeftY()) * Drivetrain.kMaxSpeed;
+    final var xSpeed = m_xspeedLimiter.calculate(getLeftY()) * Drivetrain.kMaxSpeed;
     
     // Get the y speed or sideways/strafe speed. We are inverting this because
     // we want a positive value when we pull to the left. Xbox controllers
     // return positive values when you pull to the right by default.
-    final var ySpeed = -m_yspeedLimiter.calculate(getLeftX()) * Drivetrain.kMaxSpeed;
+    final var ySpeed = m_yspeedLimiter.calculate(getLeftX()) * Drivetrain.kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
     // positive value when we pull to the left (remember, CCW is positive in
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
-    final var rot = -m_rotLimiter.calculate(m_controller.getRightX()) * Drivetrain.kMaxAngularSpeed;
+    final var rot = m_rotLimiter.calculate(m_controller.getRightX()) * Drivetrain.kMaxAngularSpeed;
 
     m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative);
-    SmartDashboard.putNumber("Pos x", m_swerve.getPose().getX());
-    SmartDashboard.putNumber("Pos y", m_swerve.getPose().getY());
-    SmartDashboard.putNumber("Heading", m_swerve.navx.getAngle());
+    
     SmartDashboard.putNumber("Lidar Readout", Lidar.getDistance());
     
   }

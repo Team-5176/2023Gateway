@@ -54,7 +54,7 @@ public class Drivetrain extends SubsystemBase{
           m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
 
   
-  private SwerveDrivePoseEstimator m_poseEstimator;
+  public SwerveDrivePoseEstimator m_poseEstimator;
 
 
   public Drivetrain(Pose2d initialPose) {
@@ -130,9 +130,9 @@ public class Drivetrain extends SubsystemBase{
     
   }
 
-  private PIDController xController = new PIDController(0.01, 0, 0);
-  private PIDController yController = new PIDController(0.01, 0, 0);
-  private PIDController rotController = new PIDController(0.01, 0, 0);
+  private PIDController xController = new PIDController(0.0, 0, 0);
+  private PIDController yController = new PIDController(0.0, 0, 0);
+  private PIDController rotController = new PIDController(0.0, 0, 0);
 
   public void matchPath(PathPlannerState state){
 

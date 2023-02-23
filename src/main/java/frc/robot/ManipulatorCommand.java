@@ -38,20 +38,21 @@ public class ManipulatorCommand extends CommandBase{
         if(Robot.m_controller.getRawButton(Constants.PIVOT_FORWARD)){
             manipulator.pivotForward();
         }
-        if(Robot.m_controller.getRawButton(Constants.EXTEND)){
+        if(Robot.m_copilot_controller.getRawButton(Constants.EXTEND)){
             manipulator.manualExtend(0.5);
         }
-        else if(Robot.m_controller.getRawButton(Constants.RETRACT)){
+        else if(Robot.m_copilot_controller.getRawButton(Constants.RETRACT)){
             manipulator.manualExtend(-0.5);
         } else{
             manipulator.manualExtend(0.0);
         }
         if(Robot.m_copilot_controller.getRawButton(Constants.MOVE_ELEVATOR_MAX)){
-            manipulator.setElevator(Constants.ELEVATOR_MAX + 0.1);
+            manipulator.setElevator(Constants.ELEVATOR_MAX + 0.5);
         }
         if(Robot.m_copilot_controller.getRawButton(Constants.MOVE_ELEVATOR_MIN)){
-            manipulator.setElevator(Constants.ELEVATOR_MIN - 0.1);
+            manipulator.setElevator(Constants.ELEVATOR_MIN - 0.5);
         }
+        
         //$if(Robot.m_controller)
     }
 }
