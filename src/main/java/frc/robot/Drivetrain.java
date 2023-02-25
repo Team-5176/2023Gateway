@@ -29,6 +29,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.SerialPort;
 
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SubsystemBase{
@@ -40,12 +41,14 @@ public class Drivetrain extends SubsystemBase{
   private final Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
   private final Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
 
+  private double startingHeading = 0;
+
   public static final SwerveModule m_frontLeft = new SwerveModule("fl", Constants.FL_DRIVE_ID, Constants.FL_TURN_ID, Constants.FL_MA3_ID, Constants.DRIVE_MAX_V, Constants.FL_K);
   public static final SwerveModule m_frontRight = new SwerveModule("fr", Constants.FR_DRIVE_ID, Constants.FR_TURN_ID, Constants.FR_MA3_ID, Constants.DRIVE_MAX_V, Constants.FR_K);
   public static final SwerveModule m_backLeft = new SwerveModule("bl", Constants.BL_DRIVE_ID, Constants.BL_TURN_ID, Constants.BL_MA3_ID, Constants.DRIVE_MAX_V, Constants.BL_K);
   public static final SwerveModule m_backRight = new SwerveModule("br", Constants.BR_DRIVE_ID, Constants.BR_TURN_ID, Constants.BR_MA3_ID, Constants.DRIVE_MAX_V, Constants.BR_K);
 
-  public final AHRS navx = new AHRS(I2C.Port.kOnboard);
+  public final AHRS navx;
   public final PhotonCamera camera1 = new PhotonCamera("Cam1");
 
   
@@ -58,22 +61,23 @@ public class Drivetrain extends SubsystemBase{
 
 
   public Drivetrain(Pose2d initialPose) {
-    navx.reset();
+    //navx = new AHRS(I2C.Port.kMXP);
+    navx = new AHRS(SerialPort.Port.kUSB);
     /* Here we use SwerveDrivePoseEstimator so that we can fuse odometry readings. The numbers used
-  below are robot specific, and should be tuned. */
-  m_poseEstimator =
-    new SwerveDrivePoseEstimator(
-        m_kinematics,
-        Rotation2d.fromDegrees(navx.getAngle()),
-        new SwerveModulePosition[] {
-          m_frontLeft.getPosition(),
-          m_frontRight.getPosition(),
-          m_backLeft.getPosition(),
-          m_backRight.getPosition()
-        },
-        new Pose2d(),
-        VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
-        VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
+    below are robot specific, and should be tuned. */
+    m_poseEstimator =
+      new SwerveDrivePoseEstimator(
+          m_kinematics,
+          Rotation2d.fromDegrees(getHeading()),
+          new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_backLeft.getPosition(),
+            m_backRight.getPosition()
+          },
+          new Pose2d(),
+          VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+          VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
   }
 
   /**
@@ -89,14 +93,16 @@ public class Drivetrain extends SubsystemBase{
     var swerveModuleStates =
         m_kinematics.toSwerveModuleStates(
             fieldRelative
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(navx.getAngle()))
+                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(getHeading()))
                 : new ChassisSpeeds(xSpeed, ySpeed, rot));
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed);
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_backLeft.setDesiredState(swerveModuleStates[2]);
     m_backRight.setDesiredState(swerveModuleStates[3]);
-    
+    SmartDashboard.putNumber("Drive X", xSpeed);
+    SmartDashboard.putNumber("Drive Y", ySpeed);
+    SmartDashboard.putNumber("Drive Rot", rot);
   }
 
 
@@ -108,7 +114,7 @@ public class Drivetrain extends SubsystemBase{
   /** Updates the field relative position of the robot. */
   public void updateOdometry() {
     m_poseEstimator.update(
-        Rotation2d.fromDegrees(navx.getAngle()),
+        Rotation2d.fromDegrees(getHeading()),
         new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
@@ -130,9 +136,9 @@ public class Drivetrain extends SubsystemBase{
     
   }
 
-  private PIDController xController = new PIDController(0.0, 0, 0);
-  private PIDController yController = new PIDController(0.0, 0, 0);
-  private PIDController rotController = new PIDController(0.0, 0, 0);
+  private PIDController xController = new PIDController(0.1, 0.01, 0);
+  private PIDController yController = new PIDController(0.1, 0.01, 0);
+  private PIDController rotController = new PIDController(0.118, 0.004, 0.003);
 
   public void matchPath(PathPlannerState state){
 
@@ -143,8 +149,25 @@ public class Drivetrain extends SubsystemBase{
     //add togather velocity that trajectory wants us to go, and pid loop correction for positional drift over time.
     double driveX = vel.getX() + xController.calculate(getPose().getX(), targetPose.getX());
     double driveY = vel.getY() + yController.calculate(getPose().getY(), targetPose.getY());
-    double driveRot = state.holonomicAngularVelocityRadPerSec + rotController.calculate(state.holonomicRotation.getDegrees(), getPose().getRotation().getDegrees());
+
+    double holonomicAngle = state.holonomicRotation.getDegrees();
+
+    double heading = getHeading();
+
+    while(Math.abs(holonomicAngle - heading) > 180){
+      if(holonomicAngle < heading){
+        holonomicAngle += 360;
+      } else{
+        heading += 360;
+      }
+    }
+
+    double driveRot = state.holonomicAngularVelocityRadPerSec + rotController.calculate(Math.toRadians(heading), Math.toRadians(holonomicAngle));
     
     drive(driveX, driveY, driveRot, true);
+  }
+
+  public double getHeading(){
+    return -navx.getAngle() + startingHeading;
   }
 }

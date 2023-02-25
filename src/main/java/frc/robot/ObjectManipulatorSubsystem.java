@@ -54,6 +54,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     public ObjectManipulatorSubsystem(){
         //register();
         extendorNeo.setIdleMode(IdleMode.kBrake);
+        elevatorNeo.setIdleMode(IdleMode.kBrake);
     }
 
     
@@ -167,6 +168,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
             }
             if(getTopLimitSwitch()){
                 elevatorCommand = 0.0;
+                manualElevatorControl = true;
             }
         }else if(elevatorSetPoint < getHeight()){
             elevatorCommand  = -0.5;
