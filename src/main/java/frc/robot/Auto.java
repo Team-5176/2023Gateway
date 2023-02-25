@@ -20,10 +20,10 @@ public class Auto extends CommandBase{
     private double stateStartTime;
     private boolean isFinished = false;
     
-    public Auto(ObjectManipulatorSubsystem m, Drivetrain d){
+    public Auto(ObjectManipulatorSubsystem m, Drivetrain d, int pathNumber){
         m_swerve = d;
         manipulator = m;
-        
+        route = pathNumber;
         addRequirements(m, d);
     }
 

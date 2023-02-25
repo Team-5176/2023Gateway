@@ -27,7 +27,7 @@ public class Robot extends TimedRobot {
   private Drivetrain m_swerve = new Drivetrain(new Pose2d());
   private final ObjectManipulatorSubsystem manipulator = new ObjectManipulatorSubsystem();
   private final ManipulatorCommand manipulatorCommand = new ManipulatorCommand(manipulator);
-  private final Auto auto = new Auto(manipulator, m_swerve);
+  private final Auto auto;// = new Auto(manipulator, m_swerve);
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
@@ -70,8 +70,10 @@ public class Robot extends TimedRobot {
     m_swerve.navx.reset();
     
 
-    //initiate swerve based on starting position specified in SmartDashboard. I rounded before converting to int just in case there are any double shenanigans
-    //m_swerve = new Drivetrain(availableStartPositions[(int)Math.round(SmartDashboard.getNumber("Starting position", 0))]);
+    if(m_swerve == null){
+      //initiate swerve based on starting position specified in SmartDashboard. I rounded before converting to int just in case there are any double shenanigans
+      m_swerve = new Drivetrain(availableStartPositions[(int)Math.round(SmartDashboard.getNumber("Starting position", 0))]);
+    }
     //m_swerve = new Drivetrain(new Pose2d());
     
     //auto.setRoute((int)Math.round(SmartDashboard.getNumber("Starting position", 0)));
@@ -91,6 +93,10 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit(){
     //m_swerve.navx.reset();
+    if(m_swerve == null){
+      //initiate swerve based on starting position specified in SmartDashboard. I rounded before converting to int just in case there are any double shenanigans
+      m_swerve = new Drivetrain(new Pose2d());
+    }
   }
 
   @Override
