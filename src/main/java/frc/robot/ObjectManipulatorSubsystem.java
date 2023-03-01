@@ -33,7 +33,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     // values for pid controllers determined experimantally
     private final ProfiledPIDController elevatorPIDController = 
         new ProfiledPIDController(
-            0.0,
+            3.0,
             0.0,
             0.0,
             new TrapezoidProfile.Constraints(
@@ -77,7 +77,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
 
     // These setpoints are in meters from their resting position
     private double elevatorSetPoint = Constants.ELEVATOR_MAX + 0.1;
-    private double extendorSetPoint = 0;
+    private double extendorSetPoint = Constants.ELEVATOR_MAX / 2.0;
 
     public boolean manualElevatorControl = false;
 
@@ -161,24 +161,29 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
         // uncomment this when ready to actually run the mechanism
 
         double elevatorCommand = 0;
-        if(elevatorSetPoint > getHeight()){
-            elevatorCommand = 0.8;
-            if(getHeight() > Constants.ELEVATOR_MAX - Constants.ELEVATOR_SLOW){
-                elevatorCommand = 0.3;
+        if(elevatorSetPoint > Constants.ELEVATOR_MAX || elevatorSetPoint < Constants.ELEVATOR_MIN){
+            if(elevatorSetPoint > getHeight()){
+                elevatorCommand = 0.8;
+                if(getHeight() > Constants.ELEVATOR_MAX - Constants.ELEVATOR_SLOW){
+                    elevatorCommand = 0.3;
+                }
+                if(getTopLimitSwitch()){
+                    elevatorCommand = 0.0;
+                    manualElevatorControl = true;
+                }
+            }else if(elevatorSetPoint < getHeight()){
+                elevatorCommand  = -0.5;
+                if(getHeight() < Constants.ELEVATOR_MIN + Constants.ELEVATOR_SLOW){
+                    elevatorCommand = -0.3;
+                }
+                if(getBottomLimitSwitch()){
+                    elevatorCommand = 0.0;
+                }
             }
-            if(getTopLimitSwitch()){
-                elevatorCommand = 0.0;
-                manualElevatorControl = true;
-            }
-        }else if(elevatorSetPoint < getHeight()){
-            elevatorCommand  = -0.5;
-            if(getHeight() < Constants.ELEVATOR_MIN + Constants.ELEVATOR_SLOW){
-                elevatorCommand = -0.3;
-            }
-            if(getBottomLimitSwitch()){
-                elevatorCommand = 0.0;
-            }
+        }else{
+            elevatorCommand = elevatorPID + 0.1;
         }
+
 
         if(!manualElevatorControl){
             elevatorNeo.set(-elevatorCommand);

@@ -24,10 +24,10 @@ import frc.robot.util.LidarLite;
 public class Robot extends TimedRobot {
   public static final XboxController m_controller = new XboxController(0);
   public static final XboxController m_copilot_controller = new XboxController(1);
-  private Drivetrain m_swerve = new Drivetrain(new Pose2d());
+  public static Drivetrain m_swerve = new Drivetrain(Constants.AutonomousPaths.examplePath.getInitialHolonomicPose());;
   private final ObjectManipulatorSubsystem manipulator = new ObjectManipulatorSubsystem();
   private final ManipulatorCommand manipulatorCommand = new ManipulatorCommand(manipulator);
-  private final Auto auto;// = new Auto(manipulator, m_swerve);
+  private Auto auto;// = new Auto(manipulator, m_swerve, 0);
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
@@ -67,13 +67,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit(){
     balance = SmartDashboard.getBoolean("Attempt Charging Station", false);
-    m_swerve.navx.reset();
     
-
-    if(m_swerve == null){
-      //initiate swerve based on starting position specified in SmartDashboard. I rounded before converting to int just in case there are any double shenanigans
-      m_swerve = new Drivetrain(availableStartPositions[(int)Math.round(SmartDashboard.getNumber("Starting position", 0))]);
-    }
+    auto = new Auto(manipulator, 0);
     //m_swerve = new Drivetrain(new Pose2d());
     
     //auto.setRoute((int)Math.round(SmartDashboard.getNumber("Starting position", 0)));
@@ -85,29 +80,29 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     //auto();
     
-    SmartDashboard.putNumber("Pos x", m_swerve.getPose().getX());
-    SmartDashboard.putNumber("Pos y", m_swerve.getPose().getY());
-    SmartDashboard.putNumber("Heading", m_swerve.getHeading());
+    
   }
 
   @Override
   public void teleopInit(){
-    //m_swerve.navx.reset();
+    
     if(m_swerve == null){
       //initiate swerve based on starting position specified in SmartDashboard. I rounded before converting to int just in case there are any double shenanigans
       m_swerve = new Drivetrain(new Pose2d());
     }
+    //m_swerve.navx.reset();
   }
 
   @Override
   public void teleopPeriodic() {
     driveWithJoystick(false);
     double angle = m_swerve.getHeading();
-    Vision.updatePosition(angle);
+    //Vision.updatePosition(angle);
     m_swerve.updateOdometry();
     SmartDashboard.putNumber("Pos x", m_swerve.getPose().getX());
     SmartDashboard.putNumber("Pos y", m_swerve.getPose().getY());
     SmartDashboard.putNumber("Heading", angle);
+    SmartDashboard.putNumber("navx raw heading", m_swerve.navx.getAngle());
     SmartDashboard.putBoolean("Navx connected", m_swerve.navx.isConnected());   
   }
 

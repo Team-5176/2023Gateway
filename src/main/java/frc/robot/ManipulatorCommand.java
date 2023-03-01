@@ -52,7 +52,9 @@ public class ManipulatorCommand extends CommandBase{
         if(Robot.m_copilot_controller.getRawButton(Constants.MOVE_ELEVATOR_MIN)){
             manipulator.setElevator(Constants.ELEVATOR_MIN - 0.5);
         }
-        
+        if(Robot.m_copilot_controller.getRawButton(Constants.STOW_ELEVATOR)){
+            manipulator.setElevator(0.5);
+        }
         //$if(Robot.m_controller)
     }
 }

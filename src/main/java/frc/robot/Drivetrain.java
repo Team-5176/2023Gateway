@@ -6,6 +6,7 @@ package frc.robot;
 
 
 
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -21,6 +22,9 @@ import edu.wpi.first.wpilibj.Timer;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.*;
 
@@ -34,23 +38,24 @@ import edu.wpi.first.wpilibj.SerialPort;
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SubsystemBase{
   public static final double kMaxSpeed = 3.0; // 3 meters per second
-  public static final double kMaxAngularSpeed = Math.PI * 1; // 1/2 rotation per second
+  public static final double kMaxAngularSpeed = Math.PI * .6; // 1/2 rotation per second
 
   private final Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
   private final Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
   private final Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
   private final Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
 
-  private double startingHeading = 0;
+  public double startingHeading = 0;
 
   public static final SwerveModule m_frontLeft = new SwerveModule("fl", Constants.FL_DRIVE_ID, Constants.FL_TURN_ID, Constants.FL_MA3_ID, Constants.DRIVE_MAX_V, Constants.FL_K);
   public static final SwerveModule m_frontRight = new SwerveModule("fr", Constants.FR_DRIVE_ID, Constants.FR_TURN_ID, Constants.FR_MA3_ID, Constants.DRIVE_MAX_V, Constants.FR_K);
   public static final SwerveModule m_backLeft = new SwerveModule("bl", Constants.BL_DRIVE_ID, Constants.BL_TURN_ID, Constants.BL_MA3_ID, Constants.DRIVE_MAX_V, Constants.BL_K);
   public static final SwerveModule m_backRight = new SwerveModule("br", Constants.BR_DRIVE_ID, Constants.BR_TURN_ID, Constants.BR_MA3_ID, Constants.DRIVE_MAX_V, Constants.BR_K);
 
-  public final AHRS navx;
+  public static final AHRS navx = new AHRS(SerialPort.Port.kUSB);
   public final PhotonCamera camera1 = new PhotonCamera("Cam1");
 
+  public PhotonCameraWrapper pcw;
   
   private final SwerveDriveKinematics m_kinematics =
       new SwerveDriveKinematics(
@@ -62,7 +67,9 @@ public class Drivetrain extends SubsystemBase{
 
   public Drivetrain(Pose2d initialPose) {
     //navx = new AHRS(I2C.Port.kMXP);
-    navx = new AHRS(SerialPort.Port.kUSB);
+    pcw = new PhotonCameraWrapper();
+    startingHeading = Constants.AutonomousPaths.examplePath.getInitialHolonomicPose().getRotation().getDegrees();
+    Robot.m_swerve.navx.reset();
     /* Here we use SwerveDrivePoseEstimator so that we can fuse odometry readings. The numbers used
     below are robot specific, and should be tuned. */
     m_poseEstimator =
@@ -75,9 +82,9 @@ public class Drivetrain extends SubsystemBase{
             m_backLeft.getPosition(),
             m_backRight.getPosition()
           },
-          new Pose2d(),
-          VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
-          VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
+          initialPose,
+          VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(2)),
+          VecBuilder.fill(0.35, 0.35, Units.degreesToRadians(10)));
   }
 
   /**
@@ -122,23 +129,38 @@ public class Drivetrain extends SubsystemBase{
           m_backRight.getPosition()
         });
 
+      
+      Optional<EstimatedRobotPose> result =
+              pcw.getEstimatedGlobalPose(m_poseEstimator.getEstimatedPosition());
 
-    
+      if (result.isPresent()) {
+          EstimatedRobotPose camPose = result.get();
+          m_poseEstimator.addVisionMeasurement(
+                  camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+      }
+       
+    /* 
     // Also apply vision measurements. We use 0.3 seconds in the past as an example -- on
     // a real robot, this must be calculated based either on latency or timestamps.
     if(Vision.hasNewTarget){
-      m_poseEstimator.addVisionMeasurement(
-          Vision.getPositionEstimate(),
-          Vision.timestamp,
-          VecBuilder.fill(0.01, 0.01, 0.01)); //This 3d vector represents the standard deviation of vision position estimates, as x (m), y (m), and theta (radians)
-          // currently these values are ones I chose as arbitrary, small numbers, but eventually it might be better to actually quantify these values
+      Pose2d estimate = Vision.getPositionEstimate();
+      double distance = Math.sqrt((estimate.getX() - getPose().getX())*(estimate.getX() - getPose().getX()) + (estimate.getY() - getPose().getY())*(estimate.getY() - getPose().getY()));
+      SmartDashboard.putNumber("Distance error", distance);
+      if(distance < 1.0){
+        m_poseEstimator.addVisionMeasurement(
+            Vision.getPositionEstimate(),
+            Vision.timestamp,
+            VecBuilder.fill(0.01, 0.01, 0.01)); //This 3d vector represents the standard deviation of vision position estimates, as x (m), y (m), and theta (radians)
+            // currently these values are ones I chose as arbitrary, small numbers, but eventually it might be better to actually quantify these values
+      }
     }
+    */
     
   }
 
-  private PIDController xController = new PIDController(0.1, 0.01, 0);
-  private PIDController yController = new PIDController(0.1, 0.01, 0);
-  private PIDController rotController = new PIDController(0.118, 0.004, 0.003);
+  private PIDController xController = new PIDController(0.450, 0.01, 0.001);
+  private PIDController yController = new PIDController(0.450, 0.01, 0.001);
+  private PIDController rotController = new PIDController(0.35, 0.01, 0.003);
 
   public void matchPath(PathPlannerState state){
 

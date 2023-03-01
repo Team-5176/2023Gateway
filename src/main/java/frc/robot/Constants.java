@@ -4,6 +4,14 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -81,12 +89,27 @@ public final class Constants {
     public static final int PIVOT_FORWARD = 4;
     public static final int PIVOT_BACK = 1;
 
-    public static final int EXTEND = 7;
-    public static final int RETRACT = 8;
+    
 
     //copilot controllor
     public static final int MOVE_ELEVATOR_MAX = 6;
     public static final int MOVE_ELEVATOR_MIN = 5;
+    public static final int STOW_ELEVATOR = 4;
+    public static final int EXTEND = 7;
+    public static final int RETRACT = 8;
 
+    static class VisionConstants {
+        static final Transform3d robotToCam =
+                new Transform3d(
+                        new Translation3d(0.127, -0.0762, 0.4318),
+                        new Rotation3d(
+                                0, 0,
+                                0)); // Cam mounted facing forward, half a meter forward of center, half a meter up
+        // from center.
+        static final String cameraName = "Cam1";
+    }
 
+    static class AutonomousPaths {
+        static final PathPlannerTrajectory examplePath = PathPlanner.loadPath("Example Path", new PathConstraints(2.5, 0.50));
+    }
 }
