@@ -47,8 +47,9 @@ public class Auto extends CommandBase{
         Robot.m_swerve.navx.reset();
         //Robot.m_swerve.navx.setAngleAdjustment(route);
         //SmartDashboard.putNumber("navx raw heading", Robot.m_swerve.navx.getAngle());
-        
-
+        Robot.m_swerve.xController.reset();
+        Robot.m_swerve.yController.reset();
+        Robot.m_swerve.rotController.reset();
     }
 
     
@@ -76,8 +77,8 @@ public class Auto extends CommandBase{
         SmartDashboard.putNumber("navx raw heading", Robot.m_swerve.navx.getAngle());
         
         //Vision.updatePosition(Robot.m_swerve.getHeading());
-        Robot.m_swerve.updateOdometry();
-        //Robot.m_swerve.matchPath((PathPlannerState)Constants.AutonomousPaths.examplePath.sample(timeMan.get() - stateStartTime));
+        
+        Robot.m_swerve.matchPath((PathPlannerState)Constants.AutonomousPaths.examplePath.sample(timeMan.get() - stateStartTime));
         if(!Robot.m_swerve.navx.isConnected()){
             isFinished = true;
         }

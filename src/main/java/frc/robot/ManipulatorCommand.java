@@ -11,6 +11,16 @@ public class ManipulatorCommand extends CommandBase{
         addRequirements(sub);
     }
 
+    private int designateStep = 0;
+    private int firstDesignation;
+    private int secondDesignation;
+    private int thirdDesignation;
+
+    @Override
+    public void initialize(){
+        designateStep = 0;
+    }
+
     @Override
     public void execute(){
         SmartDashboard.putNumber("test???", 74);
@@ -55,6 +65,15 @@ public class ManipulatorCommand extends CommandBase{
         if(Robot.m_copilot_controller.getRawButton(Constants.STOW_ELEVATOR)){
             manipulator.setElevator(0.5);
         }
+        
+        /* 
+        int pov = Robot.m_copilot_controller.getPOV();
+        SmartDashboard.putNumber("POV", pov);
+        if(Robot.m_copilot_controller.getRawButtonReleased(Constants.DESIGNATE_LEFT)){
+
+        }
+        */
+        
         //$if(Robot.m_controller)
     }
 }

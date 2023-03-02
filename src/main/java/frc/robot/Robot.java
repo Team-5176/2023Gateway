@@ -29,19 +29,15 @@ public class Robot extends TimedRobot {
   private final ManipulatorCommand manipulatorCommand = new ManipulatorCommand(manipulator);
   private Auto auto;// = new Auto(manipulator, m_swerve, 0);
 
-  // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
-  private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
-  private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
-  private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+  // Slew rate limiters to make joystick inputs more gentle; 1/2 sec from 0 to 1.
+  private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(2);
+  private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(2);
+  private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(2);
   
   //LidarSensor
   private final LidarLite Lidar = new LidarLite(new DigitalInput(2));
 
 
-
-  private final Pose2d[] availableStartPositions = {
-    new Pose2d(0.0, 0.0, new Rotation2d()) // Starting position that corresponds with 0 on smartdashboard
-  };
   //variables to be populated from SmartDashboard, determine what auto to do
   private boolean balance = false;
   
@@ -79,7 +75,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     //auto();
-    
+    m_swerve.updateOdometry();
     
   }
 
@@ -149,35 +145,4 @@ public class Robot extends TimedRobot {
     
   }
 
-
-
-  int state = 0;
-  // This will load the file "Example Path.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
-  PathPlannerTrajectory examplePath = PathPlanner.loadPath("Example Path", new PathConstraints(4, 3));
-  private void auto(){
-    
-
-    // This trajectory can then be passed to a path follower such as a PPSwerveControllerCommand
-    // Or the path can be sampled at a given point in time for custom path following
-
-    // Sample the state of the path at 1.2 seconds
-    
-    switch(state){
-      case 0:
-      PathPlannerState pathState = (PathPlannerState) examplePath.sample(1.2);
-      
-        break;
-      default:
-        break;
-    }
-
-    
-  }
-
-  
-  
-
-  private void pathFollower(){
-
-  }
 }

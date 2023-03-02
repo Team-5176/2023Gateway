@@ -8,6 +8,8 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -104,11 +106,45 @@ public final class Constants {
                         new Translation3d(0.127, -0.0762, 0.4318),
                         new Rotation3d(
                                 0, 0,
-                                0)); // Cam mounted facing forward, half a meter forward of center, half a meter up
+                                Math.toDegrees(0.001))); // Cam mounted facing forward, half a meter forward of center, half a meter up
         // from center.
         static final String cameraName = "Cam1";
     }
 
+    static class ScoringPositions {
+        static final Pose2d[] blueScorePoints = {
+            // order is left to right from driver's point of view, with 
+            new Pose2d(1.93, 4.97, Rotation2d.fromDegrees(180)),
+            new Pose2d(1.93, 4.41, Rotation2d.fromDegrees(180)),
+            new Pose2d(1.93, 3.87, Rotation2d.fromDegrees(180)),
+            new Pose2d(1.93, 3.33, Rotation2d.fromDegrees(180)),
+            new Pose2d(1.93, 2.75, Rotation2d.fromDegrees(180)),
+            new Pose2d(1.93, 4.41, Rotation2d.fromDegrees(180)),
+            new Pose2d(1.93, 2.17, Rotation2d.fromDegrees(180)),
+            new Pose2d(1.93, 1.64, Rotation2d.fromDegrees(180)),
+            new Pose2d(1.93, 1.07, Rotation2d.fromDegrees(180)),
+            new Pose2d(1.93, .59, Rotation2d.fromDegrees(180)),
+            new Pose2d(1.56, 7.34, Rotation2d.fromDegrees(0))
+
+        };
+
+        static final Pose2d[] redScorePoints = {
+
+            new Pose2d(14.6, 4.97, Rotation2d.fromDegrees(0)),
+            new Pose2d(14.6, 4.41, Rotation2d.fromDegrees(0)),
+            new Pose2d(14.6, 3.87, Rotation2d.fromDegrees(0)),
+            new Pose2d(14.6, 3.33, Rotation2d.fromDegrees(0)),
+            new Pose2d(14.6, 2.75, Rotation2d.fromDegrees(0)),
+            new Pose2d(14.6, 4.41, Rotation2d.fromDegrees(0)),
+            new Pose2d(14.6, 2.17, Rotation2d.fromDegrees(0)),
+            new Pose2d(14.6, 1.64, Rotation2d.fromDegrees(0)),
+            new Pose2d(14.6, 1.07, Rotation2d.fromDegrees(0)),
+            new Pose2d(14.6, .59, Rotation2d.fromDegrees(0)),
+            new Pose2d(.87, 7.45, Rotation2d.fromDegrees(180))
+
+        };
+        
+    }
     static class AutonomousPaths {
         static final PathPlannerTrajectory examplePath = PathPlanner.loadPath("Example Path", new PathConstraints(2.5, 0.50));
     }

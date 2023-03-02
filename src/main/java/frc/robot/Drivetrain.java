@@ -40,10 +40,10 @@ public class Drivetrain extends SubsystemBase{
   public static final double kMaxSpeed = 3.0; // 3 meters per second
   public static final double kMaxAngularSpeed = Math.PI * .6; // 1/2 rotation per second
 
-  private final Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
-  private final Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
-  private final Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
-  private final Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
+  private final Translation2d m_frontLeftLocation = new Translation2d(0.288925, 0.29845);
+  private final Translation2d m_frontRightLocation = new Translation2d(0.288925, -0.29845);
+  private final Translation2d m_backLeftLocation = new Translation2d(-0.288925, 0.29845);
+  private final Translation2d m_backRightLocation = new Translation2d(-0.288925, -0.29845);
 
   public double startingHeading = 0;
 
@@ -72,6 +72,7 @@ public class Drivetrain extends SubsystemBase{
     Robot.m_swerve.navx.reset();
     /* Here we use SwerveDrivePoseEstimator so that we can fuse odometry readings. The numbers used
     below are robot specific, and should be tuned. */
+
     m_poseEstimator =
       new SwerveDrivePoseEstimator(
           m_kinematics,
@@ -83,8 +84,8 @@ public class Drivetrain extends SubsystemBase{
             m_backRight.getPosition()
           },
           initialPose,
-          VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(2)),
-          VecBuilder.fill(0.35, 0.35, Units.degreesToRadians(10)));
+          VecBuilder.fill(0.02, 0.02, Units.degreesToRadians(5)),
+          VecBuilder.fill(1.15, 1.15, Units.degreesToRadians(30)));
   }
 
   /**
@@ -158,9 +159,9 @@ public class Drivetrain extends SubsystemBase{
     
   }
 
-  private PIDController xController = new PIDController(0.450, 0.01, 0.001);
-  private PIDController yController = new PIDController(0.450, 0.01, 0.001);
-  private PIDController rotController = new PIDController(0.35, 0.01, 0.003);
+  public PIDController xController = new PIDController(0.50, 0.01, 0.00);
+  public PIDController yController = new PIDController(0.50, 0.01, 0.00);
+  public PIDController rotController = new PIDController(0.4, 0.01, 0.00);
 
   public void matchPath(PathPlannerState state){
 

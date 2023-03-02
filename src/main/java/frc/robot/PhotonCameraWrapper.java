@@ -85,7 +85,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
             
             double distance = Math.sqrt(bestCameraToTarget.getX()*bestCameraToTarget.getX() + bestCameraToTarget.getY()*bestCameraToTarget.getY());
             SmartDashboard.putNumber("Distance?", distance);
-            if(distance > -10.50){
+            if(distance > 5.0){
                 return Optional.empty();
             }
         }
