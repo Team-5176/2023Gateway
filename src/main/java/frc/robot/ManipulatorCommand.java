@@ -50,9 +50,11 @@ public class ManipulatorCommand extends CommandBase{
         }
         if(Robot.m_copilot_controller.getRawButton(Constants.EXTEND)){
             manipulator.manualExtend(0.5);
+            manipulator.manualExtendorControl = true;
         }
         else if(Robot.m_copilot_controller.getRawButton(Constants.RETRACT)){
             manipulator.manualExtend(-0.5);
+            manipulator.manualExtendorControl = true;
         } else{
             manipulator.manualExtend(0.0);
         }
@@ -66,6 +68,7 @@ public class ManipulatorCommand extends CommandBase{
             manipulator.setElevator(0.5);
         }
         
+        
         /* 
         int pov = Robot.m_copilot_controller.getPOV();
         SmartDashboard.putNumber("POV", pov);
@@ -73,7 +76,7 @@ public class ManipulatorCommand extends CommandBase{
 
         }
         */
-        
+
         //$if(Robot.m_controller)
     }
 }

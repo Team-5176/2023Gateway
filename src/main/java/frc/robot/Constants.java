@@ -105,8 +105,8 @@ public final class Constants {
                 new Transform3d(
                         new Translation3d(0.127, -0.0762, 0.4318),
                         new Rotation3d(
-                                0, 0,
-                                Math.toDegrees(0.001))); // Cam mounted facing forward, half a meter forward of center, half a meter up
+                                0, 0, //2.64
+                                Math.toRadians(5.4))); // Cam mounted facing forward, half a meter forward of center, half a meter up
         // from center.
         static final String cameraName = "Cam1";
     }
@@ -145,7 +145,10 @@ public final class Constants {
         };
         
     }
+
+    public static final int AUTO = 0;
     static class AutonomousPaths {
-        static final PathPlannerTrajectory examplePath = PathPlanner.loadPath("Example Path", new PathConstraints(2.5, 0.50));
+        static final PathPlannerTrajectory examplePath = PathPlanner.loadPath("1-1", new PathConstraints(2.5, 0.50));
+        static final PathPlannerTrajectory path1_2 = PathPlanner.loadPath("1-2", new PathConstraints(2.5, 0.50));
     }
 }

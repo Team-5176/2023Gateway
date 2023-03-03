@@ -30,6 +30,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     // values for feedforward to be determined by SysID toolsuite, using elevator tool
     private final SimpleMotorFeedforward elevatorFeedforwardController = new SimpleMotorFeedforward(0 * Constants.VOLTAGE_TO_PERCENT_POWER, 0 * Constants.VOLTAGE_TO_PERCENT_POWER);
     
+    public double extesnionOffset = 0;
     // values for pid controllers determined experimantally
     private final ProfiledPIDController elevatorPIDController = 
         new ProfiledPIDController(
@@ -40,7 +41,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
                 1, 5));
 
     
-    private final PIDController extendorPIDController = new PIDController(0, 0, 0);
+    private final PIDController extendorPIDController = new PIDController(0.05, 0.0, 0.0);
     
 
     // define solenoids to be used for pistons
@@ -80,6 +81,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     private double extendorSetPoint = Constants.ELEVATOR_MAX / 2.0;
 
     public boolean manualElevatorControl = false;
+    public boolean manualExtendorControl = false;
 
     public void increaseElevator(double amount){
         //if(elevatorSetPoint + amount < Constants.ELEVATOR_MAX && elevatorSetPoint + amount > Constants.ELEVATOR_MIN){
@@ -93,7 +95,10 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     }
 
     public void manualExtend(double amount){
-        extendorNeo.set(amount);
+        if(manualExtendorControl){
+            extendorNeo.set(amount);
+        }
+        
     }
 
     
@@ -112,6 +117,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
      */
     public void setExtendor(double distance){
         extendorSetPoint = distance;
+        manualExtendorControl = false;
     }
 
 
@@ -144,10 +150,10 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
      * returns the currently measured extension distance in m, with 0 being all the way retracted
      */
     public double getExtension(){
-        double extension = Constants.ELEVATOR_START_HEIGHT;
-        extension += extendorEncoder.getPosition() * (1.0/4.0); // gearing ratio is currently 4:1
+        double extension = extesnionOffset;
+        // extension -= -extendorEncoder.getPosition() * (1.0/4.0); // gearing ratio is currently 4:1
         // TODO: add another constant multiplier for converting rotations to chain length movement
-        return extension;
+        return -extendorEncoder.getPosition() * (1.0/4.0) - extesnionOffset;
     }
 
     @Override
@@ -185,8 +191,13 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
         }
 
 
+        double extendorCommand = extendorPID;
+
         if(!manualElevatorControl){
             elevatorNeo.set(-elevatorCommand);
+        }
+        if(!manualExtendorControl){
+            extendorNeo.set(-extendorCommand);
         }
         
         //elevatorNeo.set(elevatorFeedforward + elevatorPID);
@@ -198,6 +209,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Extension Distance", getExtension());
         SmartDashboard.putBoolean("Top Limit Switch State", getTopLimitSwitch());
         SmartDashboard.putBoolean("Bottom Limit Switch State", getBottomLimitSwitch());
+        SmartDashboard.putNumber("Extendor output", -extendorCommand);
         
     }
 

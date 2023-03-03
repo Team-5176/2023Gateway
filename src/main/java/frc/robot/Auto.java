@@ -50,6 +50,14 @@ public class Auto extends CommandBase{
         Robot.m_swerve.xController.reset();
         Robot.m_swerve.yController.reset();
         Robot.m_swerve.rotController.reset();
+        manipulator.extesnionOffset += manipulator.getExtension();
+
+        //configure manipulator
+        manipulator.setExtendor(10.50);
+        manipulator.closePincher();
+        manipulator.pivotForward();
+        manipulator.setElevator(Constants.ELEVATOR_MAX + 3);
+
     }
 
     
@@ -59,9 +67,7 @@ public class Auto extends CommandBase{
 
     int state = 0;
     
-    private void auto1(){
-        
-    }
+    
 
     private boolean started = false;
     @Override
@@ -76,12 +82,59 @@ public class Auto extends CommandBase{
         SmartDashboard.putNumber("Heading", Robot.m_swerve.getHeading());
         SmartDashboard.putNumber("navx raw heading", Robot.m_swerve.navx.getAngle());
         
-        //Vision.updatePosition(Robot.m_swerve.getHeading());
+        if(Constants.AUTO == 0){
+            auto1();
+        }
+
         
-        Robot.m_swerve.matchPath((PathPlannerState)Constants.AutonomousPaths.examplePath.sample(timeMan.get() - stateStartTime));
         if(!Robot.m_swerve.navx.isConnected()){
             isFinished = true;
         }
+    }
+    private void auto1(){
+        if(state == 0){
+            if(timeMan.get() - stateStartTime > 3.0){
+                state ++;
+                manipulator.openPincher();
+                
+                stateStartTime = timeMan.get();
+            }
+        }
+        else if(state == 1){
+            if(timeMan.get() - stateStartTime > .5){
+                manipulator.setExtendor(3);
+                state ++;
+                stateStartTime = timeMan.get();
+            }
+        }
+        else if (state == 2){
+            Robot.m_swerve.matchPath((PathPlannerState)Constants.AutonomousPaths.examplePath.sample(timeMan.get() - stateStartTime));
+            if(timeMan.get() - stateStartTime > 2.0){
+                manipulator.setElevator(Constants.ELEVATOR_MIN - 2);
+                manipulator.pivotBack();
+            }
+            if(Constants.AutonomousPaths.examplePath.getTotalTimeSeconds() < timeMan.get() - stateStartTime){
+                manipulator.closePincher();
+                state += 1;
+                stateStartTime = timeMan.get();
+            }
+        }else if(state == 3){
+            Robot.m_swerve.matchPath((PathPlannerState)Constants.AutonomousPaths.path1_2.sample(timeMan.get() - stateStartTime));
+            if(timeMan.get() - stateStartTime > 2){
+                manipulator.setElevator(Constants.ELEVATOR_MAX + 2);
+                manipulator.pivotForward();
+                manipulator.setExtendor(10.0);
+            }
+            if(Constants.AutonomousPaths.path1_2.getTotalTimeSeconds() < timeMan.get() - stateStartTime){
+                manipulator.openPincher();
+                state ++;
+                stateStartTime = timeMan.get();
+            }
+        }
+         else{
+            isFinished = true;
+        }
+        //
     }
 
     @Override

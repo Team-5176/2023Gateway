@@ -159,9 +159,9 @@ public class Drivetrain extends SubsystemBase{
     
   }
 
-  public PIDController xController = new PIDController(0.50, 0.01, 0.00);
-  public PIDController yController = new PIDController(0.50, 0.01, 0.00);
-  public PIDController rotController = new PIDController(0.4, 0.01, 0.00);
+  public PIDController xController = new PIDController(1.0, 0.01, 0.00);
+  public PIDController yController = new PIDController(1.0, 0.01, 0.00);
+  public PIDController rotController = new PIDController(0.9, 0.01, 0.00);
 
   public void matchPath(PathPlannerState state){
 
