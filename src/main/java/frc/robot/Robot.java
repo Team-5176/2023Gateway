@@ -10,6 +10,7 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+import com.pathplanner.lib.server.PathPlannerServer;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -24,7 +25,7 @@ import frc.robot.util.LidarLite;
 public class Robot extends TimedRobot {
   public static final XboxController m_controller = new XboxController(0);
   public static final XboxController m_copilot_controller = new XboxController(1);
-  public static Drivetrain m_swerve = new Drivetrain(Constants.AutonomousPaths.examplePath.getInitialHolonomicPose());;
+  public static Drivetrain m_swerve;
   private final ObjectManipulatorSubsystem manipulator = new ObjectManipulatorSubsystem();
   private final ManipulatorCommand manipulatorCommand = new ManipulatorCommand(manipulator);
   private Auto auto;// = new Auto(manipulator, m_swerve, 0);
@@ -45,10 +46,14 @@ public class Robot extends TimedRobot {
   
   public Robot(){
     manipulator.setDefaultCommand(manipulatorCommand);
+    m_swerve = new Drivetrain();
+    
+    
   }
 
   @Override
   public void robotInit() {
+    PathPlannerServer.startServer(5811);
     //Send these values to SmartDashboard so that they can be used to choose what auto to do. 
     //SmartDashboard.putBoolean("Attempt Charging Station", false);
     //SmartDashboard.putNumber("Starting position", 0);
@@ -84,7 +89,7 @@ public class Robot extends TimedRobot {
     
     if(m_swerve == null){
       //initiate swerve based on starting position specified in SmartDashboard. I rounded before converting to int just in case there are any double shenanigans
-      m_swerve = new Drivetrain(new Pose2d());
+      m_swerve = new Drivetrain();
     }
     //m_swerve.navx.reset();
   }

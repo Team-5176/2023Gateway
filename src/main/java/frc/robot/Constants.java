@@ -90,6 +90,7 @@ public final class Constants {
     public static final int OPEN_GRABBER = 5;
     public static final int PIVOT_FORWARD = 4;
     public static final int PIVOT_BACK = 1;
+    public static final int EXECUTE_AUTO = 7; //TODO: pick actual binding
 
     
 
@@ -99,6 +100,14 @@ public final class Constants {
     public static final int STOW_ELEVATOR = 4;
     public static final int EXTEND = 7;
     public static final int RETRACT = 8;
+    public static final int DESIGNATE_DOWN = 1; //TODO: Pick actual bindings
+    public static final int DESIGNATE_UP = 1;
+    public static final int DESIGNATE_LEFT = 1;
+    public static final int DESIGNATE_RIGHT = 1;
+    public static final int DESIGNATE_RESET = 1;
+
+    //
+    public static final double INTAKE_EXTENSION_DISTANCE = 3.0;
 
     static class VisionConstants {
         static final Transform3d robotToCam =
@@ -146,9 +155,13 @@ public final class Constants {
         
     }
 
-    public static final int AUTO = 0;
+    public static int AUTO = 0;
+    public static boolean IS_BLUE = true;
     static class AutonomousPaths {
-        static final PathPlannerTrajectory examplePath = PathPlanner.loadPath("1-1", new PathConstraints(2.5, 0.50));
+        static final PathPlannerTrajectory path1_1 = PathPlanner.loadPath("1-1", new PathConstraints(2.5, 0.50));
         static final PathPlannerTrajectory path1_2 = PathPlanner.loadPath("1-2", new PathConstraints(2.5, 0.50));
+
+        static final PathPlannerTrajectory path1_1Red = PathPlanner.loadPath("1-1", new PathConstraints(2.5, 0.50));
+        static final PathPlannerTrajectory path1_2Red = PathPlanner.loadPath("1-2", new PathConstraints(2.5, 0.50));
     }
 }

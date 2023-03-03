@@ -5,6 +5,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 //import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+import com.pathplanner.lib.server.PathPlannerServer;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.trajectory.Trajectory.State;
@@ -35,21 +36,17 @@ public class Auto extends CommandBase{
     public void initialize(){
         timeMan.start();
         stateStartTime = timeMan.get();
-        if(Robot.m_swerve == null){
-            //initiate swerve based on starting position specified in SmartDashboard. I rounded before converting to int just in case there are any double shenanigans
-            //m_swerve = new Drivetrain()
-            Robot.m_swerve = new Drivetrain(Constants.AutonomousPaths.examplePath.getInitialHolonomicPose());
-            
-            SmartDashboard.putNumber("Initial Angle", Constants.AutonomousPaths.examplePath.getInitialHolonomicPose().getRotation().getDegrees());
-        }
-        //Robot.m_swerve.startingHeading = Constants.AutonomousPaths.examplePath.getInitialHolonomicPose().getRotation().getDegrees();
-        //m_swerve = Robot.m_swerve;
+
         Robot.m_swerve.navx.reset();
-        //Robot.m_swerve.navx.setAngleAdjustment(route);
+
         //SmartDashboard.putNumber("navx raw heading", Robot.m_swerve.navx.getAngle());
+
+        //reset PID loops (probably not actually needed)
         Robot.m_swerve.xController.reset();
         Robot.m_swerve.yController.reset();
         Robot.m_swerve.rotController.reset();
+
+        //reset extension offset so that the extendor thinks it is starting at distance 0
         manipulator.extesnionOffset += manipulator.getExtension();
 
         //configure manipulator
@@ -60,60 +57,62 @@ public class Auto extends CommandBase{
 
     }
 
-    
-    public void setRoute(int r){
-        route = r;
-    }
+    private int state = 0;
 
-    int state = 0;
-    
-    
-
-    private boolean started = false;
+    private boolean started = false; // implemented this when we had a weird delay between initialize and the first execute. Probably not needed any more, but I am going to leave it
     @Override
     public void execute(){
         if(!started){
-            SmartDashboard.putNumber("time error", timeMan.get() - stateStartTime);
+            //initially used for debuging
+            //SmartDashboard.putNumber("time error", timeMan.get() - stateStartTime);
             stateStartTime = timeMan.get();
             started = true;
         }
+
+
         SmartDashboard.putNumber("Pos x", Robot.m_swerve.getPose().getX());
         SmartDashboard.putNumber("Pos y", Robot.m_swerve.getPose().getY());
         SmartDashboard.putNumber("Heading", Robot.m_swerve.getHeading());
-        SmartDashboard.putNumber("navx raw heading", Robot.m_swerve.navx.getAngle());
+        //SmartDashboard.putNumber("navx raw heading", Robot.m_swerve.navx.getAngle());
         
+
         if(Constants.AUTO == 0){
             auto1();
         }
 
-        
+        //if navx is disconnected, stop autonomous
         if(!Robot.m_swerve.navx.isConnected()){
             isFinished = true;
         }
     }
+
     private void auto1(){
-        if(state == 0){
+        if(state == 0){ //wait 3 seconds while the extendor extends and the grabber pivots out before openning the grabber and releasing the first cone
             if(timeMan.get() - stateStartTime > 3.0){
-                state ++;
+                
                 manipulator.openPincher();
                 
+                // These two things are done after every state change
+                state ++;
                 stateStartTime = timeMan.get();
+                //
             }
         }
-        else if(state == 1){
-            if(timeMan.get() - stateStartTime > .5){
-                manipulator.setExtendor(3);
+        else if(state == 1){ //waits half a second so that the cone can drop before pulling the extendor in
+            if(timeMan.get() - stateStartTime > .5){ 
+                manipulator.setExtendor(Constants.INTAKE_EXTENSION_DISTANCE);
+
                 state ++;
                 stateStartTime = timeMan.get();
             }
         }
-        else if (state == 2){
-            Robot.m_swerve.matchPath((PathPlannerState)Constants.AutonomousPaths.examplePath.sample(timeMan.get() - stateStartTime));
-            if(timeMan.get() - stateStartTime > 2.0){
+        else if (state == 2){ // Begin driving to the first cube
+            Robot.m_swerve.matchPath((PathPlannerState)Constants.AutonomousPaths.path1_1.sample(timeMan.get() - stateStartTime));
+            if(timeMan.get() - stateStartTime > 2.0){ // After it has been driving for two seconds, set the elevator all the way down and picot back the intake
                 manipulator.setElevator(Constants.ELEVATOR_MIN - 2);
                 manipulator.pivotBack();
             }
-            if(Constants.AutonomousPaths.examplePath.getTotalTimeSeconds() < timeMan.get() - stateStartTime){
+            if(Constants.AutonomousPaths.path1_1.getTotalTimeSeconds() < timeMan.get() - stateStartTime){ // After the path has been completed, close the grabber
                 manipulator.closePincher();
                 state += 1;
                 stateStartTime = timeMan.get();
@@ -131,7 +130,7 @@ public class Auto extends CommandBase{
                 stateStartTime = timeMan.get();
             }
         }
-         else{
+         else{ //After the autonomous is completed, exit the autonomous command
             isFinished = true;
         }
         //

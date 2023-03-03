@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Timer;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+import com.pathplanner.lib.server.PathPlannerServer;
 
 import java.util.Optional;
 
@@ -65,14 +66,29 @@ public class Drivetrain extends SubsystemBase{
   public SwerveDrivePoseEstimator m_poseEstimator;
 
 
-  public Drivetrain(Pose2d initialPose) {
+  public Drivetrain() {
     //navx = new AHRS(I2C.Port.kMXP);
     pcw = new PhotonCameraWrapper();
-    startingHeading = Constants.AutonomousPaths.examplePath.getInitialHolonomicPose().getRotation().getDegrees();
+    Pose2d initialPose;
+    if(Constants.AUTO == 0){
+      if(Constants.IS_BLUE){
+        initialPose = Constants.AutonomousPaths.path1_1.getInitialHolonomicPose();
+      }
+      else{
+        initialPose = Constants.AutonomousPaths.path1_1Red.getInitialHolonomicPose();
+      }
+    } 
+    else{
+      initialPose = new Pose2d();
+      
+    }
+
+    startingHeading = initialPose.getRotation().getDegrees();
+
     Robot.m_swerve.navx.reset();
     /* Here we use SwerveDrivePoseEstimator so that we can fuse odometry readings. The numbers used
     below are robot specific, and should be tuned. */
-
+    
     m_poseEstimator =
       new SwerveDrivePoseEstimator(
           m_kinematics,
@@ -111,8 +127,21 @@ public class Drivetrain extends SubsystemBase{
     SmartDashboard.putNumber("Drive X", xSpeed);
     SmartDashboard.putNumber("Drive Y", ySpeed);
     SmartDashboard.putNumber("Drive Rot", rot);
+    
   }
 
+  public Pose2d getVelocity(){
+    // Convert to chassis speeds
+    ChassisSpeeds chassisSpeeds = m_kinematics.toChassisSpeeds(
+      m_frontLeft.getState(), m_frontRight.getState(), m_backLeft.getState(), m_backRight.getState());
+
+    // Getting individual speeds
+    double forward = chassisSpeeds.vxMetersPerSecond;
+    double sideways = chassisSpeeds.vyMetersPerSecond;
+    Translation2d vel = new Translation2d(forward, sideways).rotateBy(Rotation2d.fromDegrees(getHeading()));
+
+    return new Pose2d(vel, vel.getAngle());
+  }
 
   public Pose2d getPose(){
     
@@ -186,6 +215,9 @@ public class Drivetrain extends SubsystemBase{
     }
 
     double driveRot = state.holonomicAngularVelocityRadPerSec + rotController.calculate(Math.toRadians(heading), Math.toRadians(holonomicAngle));
+
+    //sends path information to the server so that it can be visualized on the driverstation
+    PathPlannerServer.sendPathFollowingData(new Pose2d(targetPose.getTranslation(), state.holonomicRotation), getPose());
     
     drive(driveX, driveY, driveRot, true);
   }
