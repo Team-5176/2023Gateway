@@ -20,7 +20,7 @@ public class ManipulatorCommand extends CommandBase{
         addRequirements(sub);
     }
 
-    private int designateStep = 0;
+    public int designateStep = 0;
     private int[] designations = {0, 0, 0};
     private boolean runningPath;
     private PathPlannerTrajectory scoringTrajectory;
@@ -35,6 +35,8 @@ public class ManipulatorCommand extends CommandBase{
     @Override
     public void execute(){
         SmartDashboard.putNumber("test???", 74);
+        SmartDashboard.putNumber("Designate step", designateStep);
+
         if(Robot.m_controller.getRawButton(Constants.ELEVATOR_UP)){
             manipulator.increaseElevator(0.5);
             manipulator.manualElevatorControl = true;
@@ -70,10 +72,10 @@ public class ManipulatorCommand extends CommandBase{
             manipulator.manualExtend(0.0);
         }
         if(Robot.m_copilot_controller.getRawButton(Constants.MOVE_ELEVATOR_MAX)){
-            manipulator.setElevator(Constants.ELEVATOR_MAX + 0.5);
+            manipulator.setElevator(Constants.ELEVATOR_MAX + 1.5);
         }
         if(Robot.m_copilot_controller.getRawButton(Constants.MOVE_ELEVATOR_MIN)){
-            manipulator.setElevator(Constants.ELEVATOR_MIN - 0.5);
+            manipulator.setElevator(Constants.ELEVATOR_MIN - 1.5);
         }
         if(Robot.m_copilot_controller.getRawButton(Constants.STOW_ELEVATOR)){
             manipulator.setElevator(0.5);
@@ -139,8 +141,8 @@ public class ManipulatorCommand extends CommandBase{
                 manipulator.setExtendor(Constants.INTAKE_EXTENSION_DISTANCE);
             }
             else if(designations[2] == 0){
-                manipulator.setElevator(0.7);
-                manipulator.setExtendor(7.5);
+                manipulator.setElevator(0.953);
+                manipulator.setExtendor(8.0);
                 manipulator.pivotForward();
             }
             else if(designations[2] == 1){
@@ -156,7 +158,12 @@ public class ManipulatorCommand extends CommandBase{
             if(scoringTrajectory.getTotalTimeSeconds() < Timer.getFPGATimestamp() - pathStartTime){
                 runningPath = false;
             }
+            if(Robot.m_controller.getRawButton(Constants.STOP_AUTO)){
+                runningPath = false;
+            }
         }
+
+
         /* 
         int pov = Robot.m_copilot_controller.getPOV();
         SmartDashboard.putNumber("POV", pov);

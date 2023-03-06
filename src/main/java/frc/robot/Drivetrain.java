@@ -70,12 +70,13 @@ public class Drivetrain extends SubsystemBase{
     //navx = new AHRS(I2C.Port.kMXP);
     pcw = new PhotonCameraWrapper();
     Pose2d initialPose;
-    if(Constants.AUTO == 0){
+    if(Constants.AUTO == 1){
       if(Constants.IS_BLUE){
         initialPose = Constants.AutonomousPaths.path1_1.getInitialHolonomicPose();
       }
       else{
         initialPose = Constants.AutonomousPaths.path1_1Red.getInitialHolonomicPose();
+        SmartDashboard.putNumber("Initial pose x", initialPose.getX());
       }
     } 
     else{
@@ -114,10 +115,14 @@ public class Drivetrain extends SubsystemBase{
    */
   @SuppressWarnings("ParameterName")
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    double heading = getHeading();
+    if(!Constants.IS_BLUE){
+      //heading += 180.0;
+    }
     var swerveModuleStates =
         m_kinematics.toSwerveModuleStates(
             fieldRelative
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(getHeading()))
+                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(heading))
                 : new ChassisSpeeds(xSpeed, ySpeed, rot));
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed);
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
@@ -188,9 +193,9 @@ public class Drivetrain extends SubsystemBase{
     
   }
 
-  public PIDController xController = new PIDController(1.0, 0.01, 0.00);
-  public PIDController yController = new PIDController(1.0, 0.01, 0.00);
-  public PIDController rotController = new PIDController(0.9, 0.01, 0.00);
+  public PIDController xController = new PIDController(1.0, 0.04, 0.00);
+  public PIDController yController = new PIDController(1.0, 0.04, 0.00);
+  public PIDController rotController = new PIDController(1.0, 0.02, 0.00);
 
   public void matchPath(PathPlannerState state){
 
@@ -225,4 +230,10 @@ public class Drivetrain extends SubsystemBase{
   public double getHeading(){
     return -navx.getAngle() + startingHeading;
   }
+
+  public void reset(Pose2d initialPose){
+    startingHeading = initialPose.getRotation().getDegrees();
+    m_poseEstimator.resetPosition(Rotation2d.fromDegrees(getHeading()), new SwerveModulePosition[] { m_frontLeft.getPosition(), m_frontRight.getPosition(), m_backLeft.getPosition(), m_backRight.getPosition()}, initialPose);
+  }
+
 }

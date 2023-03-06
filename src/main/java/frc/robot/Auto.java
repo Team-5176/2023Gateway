@@ -8,6 +8,7 @@ import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import com.pathplanner.lib.server.PathPlannerServer;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,6 +32,9 @@ public class Auto extends CommandBase{
 
     // This will load the file "Example Path.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
     
+    private PathPlannerTrajectory path1;
+    private PathPlannerTrajectory path2;
+    private PathPlannerTrajectory path3;
 
     @Override
     public void initialize(){
@@ -41,6 +45,21 @@ public class Auto extends CommandBase{
 
         //SmartDashboard.putNumber("navx raw heading", Robot.m_swerve.navx.getAngle());
 
+        if(Constants.IS_BLUE){
+            path1 = Constants.AutonomousPaths.path1_1;
+            path2 = Constants.AutonomousPaths.path1_2;
+        }
+        else{
+            path1 = Constants.AutonomousPaths.path1_1Red;
+            path2 = Constants.AutonomousPaths.path1_2Red;
+        }
+
+            
+        Pose2d initialPose = path1.getInitialHolonomicPose();
+        
+        Robot.m_swerve.reset(initialPose);
+        
+        
         //reset PID loops (probably not actually needed)
         Robot.m_swerve.xController.reset();
         Robot.m_swerve.yController.reset();
@@ -50,12 +69,14 @@ public class Auto extends CommandBase{
         manipulator.extesnionOffset += manipulator.getExtension();
 
         //configure manipulator
-        manipulator.setExtendor(10.50);
+        manipulator.setExtendor(9.50);
         manipulator.closePincher();
         manipulator.pivotForward();
         manipulator.setElevator(Constants.ELEVATOR_MAX + 3);
 
     }
+
+    
 
     private int state = 0;
 
@@ -76,8 +97,11 @@ public class Auto extends CommandBase{
         //SmartDashboard.putNumber("navx raw heading", Robot.m_swerve.navx.getAngle());
         
 
-        if(Constants.AUTO == 0){
+        if(Constants.AUTO == 1){
             auto1();
+        }
+        else if(Constants.AUTO == 2){
+            auto2();
         }
 
         //if navx is disconnected, stop autonomous
@@ -107,24 +131,24 @@ public class Auto extends CommandBase{
             }
         }
         else if (state == 2){ // Begin driving to the first cube
-            Robot.m_swerve.matchPath((PathPlannerState)Constants.AutonomousPaths.path1_1.sample(timeMan.get() - stateStartTime));
+            Robot.m_swerve.matchPath((PathPlannerState)path1.sample(timeMan.get() - stateStartTime));
             if(timeMan.get() - stateStartTime > 2.0){ // After it has been driving for two seconds, set the elevator all the way down and picot back the intake
                 manipulator.setElevator(Constants.ELEVATOR_MIN - 2);
                 manipulator.pivotBack();
             }
-            if(Constants.AutonomousPaths.path1_1.getTotalTimeSeconds() < timeMan.get() - stateStartTime){ // After the path has been completed, close the grabber
+            if(path1.getTotalTimeSeconds() < timeMan.get() - stateStartTime){ // After the path has been completed, close the grabber
                 manipulator.closePincher();
                 state += 1;
                 stateStartTime = timeMan.get();
             }
         }else if(state == 3){
-            Robot.m_swerve.matchPath((PathPlannerState)Constants.AutonomousPaths.path1_2.sample(timeMan.get() - stateStartTime));
+            Robot.m_swerve.matchPath((PathPlannerState)path2.sample(timeMan.get() - stateStartTime));
             if(timeMan.get() - stateStartTime > 2){
                 manipulator.setElevator(Constants.ELEVATOR_MAX + 2);
                 manipulator.pivotForward();
                 manipulator.setExtendor(10.0);
             }
-            if(Constants.AutonomousPaths.path1_2.getTotalTimeSeconds() < timeMan.get() - stateStartTime){
+            if(path2.getTotalTimeSeconds() < timeMan.get() - stateStartTime){
                 manipulator.openPincher();
                 state ++;
                 stateStartTime = timeMan.get();
@@ -134,6 +158,31 @@ public class Auto extends CommandBase{
             isFinished = true;
         }
         //
+    }
+
+    private void auto2(){
+        if(state == 0){
+            if(timeMan.get() - stateStartTime >3.0)
+
+            manipulator.openPincher();
+
+            state++;
+            stateStartTime=timeMan.get();
+        }
+
+        if(state == 1){
+            if(timeMan.get() - stateStartTime >.5){
+                manipulator.setExtendor(Constants.INTAKE_EXTENSION_DISTANCE);
+
+                state++;
+                stateStartTime=timeMan.get();
+            }
+        }
+
+        if(state == 2){
+            Robot.m_swerve.matchPath((PathPlannerState)path1.sample(timeMan.get() - stateStartTime));
+
+        }
     }
 
     @Override

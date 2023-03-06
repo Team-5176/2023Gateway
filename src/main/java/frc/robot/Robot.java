@@ -17,10 +17,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.util.LidarLite;
+import edu.wpi.first.wpilibj.DriverStation;
+
 
 public class Robot extends TimedRobot {
   public static final XboxController m_controller = new XboxController(0);
@@ -57,6 +60,11 @@ public class Robot extends TimedRobot {
     //Send these values to SmartDashboard so that they can be used to choose what auto to do. 
     //SmartDashboard.putBoolean("Attempt Charging Station", false);
     //SmartDashboard.putNumber("Starting position", 0);
+    //gets alliance color from driverStation and sets IS_BLUE acordingly;
+    if(DriverStation.getAlliance() == Alliance.Red)
+      Constants.IS_BLUE = false;
+    else
+      Constants.IS_BLUE = true;
   }
 
   @Override
@@ -70,6 +78,14 @@ public class Robot extends TimedRobot {
     balance = SmartDashboard.getBoolean("Attempt Charging Station", false);
     
     auto = new Auto(manipulator, 0);
+
+    //gets alliance color from driverStation and sets IS_BLUE acordingly;
+    if(DriverStation.getAlliance() == Alliance.Red)
+      Constants.IS_BLUE = false;
+    else
+      Constants.IS_BLUE = true;
+
+    
     //m_swerve = new Drivetrain(new Pose2d());
     
     //auto.setRoute((int)Math.round(SmartDashboard.getNumber("Starting position", 0)));
@@ -86,7 +102,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit(){
-    
+    manipulatorCommand.designateStep = 0;
     if(m_swerve == null){
       //initiate swerve based on starting position specified in SmartDashboard. I rounded before converting to int just in case there are any double shenanigans
       m_swerve = new Drivetrain();

@@ -91,7 +91,7 @@ public final class Constants {
     public static final int PIVOT_FORWARD = 4;
     public static final int PIVOT_BACK = 1;
     public static final int EXECUTE_AUTO = 7; //TODO: pick actual binding
-
+    public static final int STOP_AUTO = 8;
     
 
     //copilot controllor
@@ -101,21 +101,22 @@ public final class Constants {
     public static final int EXTEND = 7;
     public static final int RETRACT = 8;
     public static final int DESIGNATE_DOWN = 1; //TODO: Pick actual bindings
-    public static final int DESIGNATE_UP = 1;
-    public static final int DESIGNATE_LEFT = 1;
-    public static final int DESIGNATE_RIGHT = 1;
-    public static final int DESIGNATE_RESET = 1;
+    public static final int DESIGNATE_UP = 4;
+    public static final int DESIGNATE_LEFT = 3;
+    public static final int DESIGNATE_RIGHT = 2;
+    public static final int DESIGNATE_RESET = 9;
 
     //
-    public static final double INTAKE_EXTENSION_DISTANCE = 3.0;
+    public static final double INTAKE_EXTENSION_DISTANCE = 2.7;
 
     static class VisionConstants {
         static final Transform3d robotToCam =
                 new Transform3d(
-                        new Translation3d(0.127, -0.0762, 0.4318),
+                    //0.127
+                        new Translation3d(0.10, -0.0762, 0.4318),
                         new Rotation3d(
                                 0, 0, //2.64
-                                Math.toRadians(5.4))); // Cam mounted facing forward, half a meter forward of center, half a meter up
+                                Math.toRadians(6.0))); // Cam mounted facing forward, half a meter forward of center, half a meter up
         // from center.
         static final String cameraName = "Cam1";
     }
@@ -155,13 +156,15 @@ public final class Constants {
         
     }
 
-    public static int AUTO = 0;
-    public static boolean IS_BLUE = true;
+    public static int AUTO = 1;
+    public static boolean IS_BLUE = false;
     static class AutonomousPaths {
-        static final PathPlannerTrajectory path1_1 = PathPlanner.loadPath("1-1", new PathConstraints(2.5, 0.50));
-        static final PathPlannerTrajectory path1_2 = PathPlanner.loadPath("1-2", new PathConstraints(2.5, 0.50));
+        static final PathPlannerTrajectory path1_1 = PathPlanner.loadPath("1-1", new PathConstraints(2.5, 1.0));
+        static final PathPlannerTrajectory path1_2 = PathPlanner.loadPath("1-2", new PathConstraints(2.5, 1.0));
+        static final PathPlannerTrajectory path2_1 = PathPlanner.loadPath("2-1", new PathConstraints(2.5, 1.0));
 
-        static final PathPlannerTrajectory path1_1Red = PathPlanner.loadPath("1-1", new PathConstraints(2.5, 0.50));
-        static final PathPlannerTrajectory path1_2Red = PathPlanner.loadPath("1-2", new PathConstraints(2.5, 0.50));
+        static final PathPlannerTrajectory path1_1Red = PathPlanner.loadPath("1-1 Red", new PathConstraints(2.5, 1.0));
+        static final PathPlannerTrajectory path1_2Red = PathPlanner.loadPath("1-2 Red", new PathConstraints(2.5, 1.0));
+        static final PathPlannerTrajectory path2_1Red = PathPlanner.loadPath("2-1 Red", new PathConstraints(2.5, 1.0));
     }
 }
