@@ -194,7 +194,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
         double extendorCommand = extendorPID;
 
         if(!manualElevatorControl){
-            elevatorNeo.set(-elevatorCommand);
+            //elevatorNeo.set(-elevatorCommand);
         }
         if(!manualExtendorControl){
             extendorNeo.set(-extendorCommand);

@@ -77,9 +77,11 @@ public class MA3AnalogEncoder {
         return corrected;
     }
 */
+    public double voltage = 0.0;
     public Rotation2d getRotation(){
         //return rotation_;
-        Rotation2d rawAngle = new Rotation2d(2 * Math.PI * mAnalogInput.getVoltage() / maxv); //raw encoder rotation, the 2 is negative because SwerveModule reads counterclockwise as increasing
+        voltage = mAnalogInput.getVoltage();
+        Rotation2d rawAngle = new Rotation2d(2 * Math.PI * voltage / maxv); //raw encoder rotation, the 2 is negative because SwerveModule reads counterclockwise as increasing
         Rotation2d calibratedAngle = Rotation2d.fromDegrees(rawAngle.getDegrees() - calibrationK);
         if(calibratedAngle.getDegrees() > 180){
             calibratedAngle = Rotation2d.fromDegrees(-180 + (calibratedAngle.getDegrees() - 180));

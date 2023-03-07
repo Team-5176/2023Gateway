@@ -172,12 +172,13 @@ public class Auto extends CommandBase{
 
     private void auto2(){
         if(state == 0){
-            if(timeMan.get() - stateStartTime >3.0)
+            if(timeMan.get() - stateStartTime >3.0){
 
-            manipulator.openPincher();
+                manipulator.openPincher();
 
-            state++;
-            stateStartTime=timeMan.get();
+                state++;
+                stateStartTime=timeMan.get();
+            }
         }
 
        else if(state == 1){
@@ -198,7 +199,6 @@ public class Auto extends CommandBase{
             }
 
         }
-
         else{
             isFinished = true;
         }

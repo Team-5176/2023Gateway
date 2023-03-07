@@ -155,7 +155,7 @@ public class SwerveModule {
     SmartDashboard.putNumber(name + " desiredAngle", state.angle.getDegrees());
     SmartDashboard.putNumber(name + " currentAngle", getState().angle.getDegrees());
     SmartDashboard.putNumber(name + " drive output", driveOutput + driveFeedforward);
-    SmartDashboard.putNumber(name + " voltage", m_driveMotor.getMotorOutputVoltage());
+    //SmartDashboard.putNumber(name + " voltage", m_turningEncoder.voltage);
 
     //set motor powers
     m_driveMotor.set(-(driveOutput + driveFeedforward));
