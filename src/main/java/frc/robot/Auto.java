@@ -46,12 +46,22 @@ public class Auto extends CommandBase{
         //SmartDashboard.putNumber("navx raw heading", Robot.m_swerve.navx.getAngle());
 
         if(Constants.IS_BLUE){
+            if(Constants.AUTO == 1){
             path1 = Constants.AutonomousPaths.path1_1;
             path2 = Constants.AutonomousPaths.path1_2;
+            }
+            else if(Constants.AUTO == 2){
+                path1 = Constants.AutonomousPaths.path2_1;
+            }
         }
         else{
+             if(Constants.AUTO == 1){
             path1 = Constants.AutonomousPaths.path1_1Red;
             path2 = Constants.AutonomousPaths.path1_2Red;
+            }
+            else if(Constants.AUTO == 2){
+                path1 = Constants.AutonomousPaths.path2_1Red;
+            }
         }
 
             
@@ -170,7 +180,7 @@ public class Auto extends CommandBase{
             stateStartTime=timeMan.get();
         }
 
-        if(state == 1){
+       else if(state == 1){
             if(timeMan.get() - stateStartTime >.5){
                 manipulator.setExtendor(Constants.INTAKE_EXTENSION_DISTANCE);
 
@@ -179,9 +189,18 @@ public class Auto extends CommandBase{
             }
         }
 
-        if(state == 2){
+       else if(state == 2){
             Robot.m_swerve.matchPath((PathPlannerState)path1.sample(timeMan.get() - stateStartTime));
+            if(path1.getTotalTimeSeconds() < timeMan.get() - stateStartTime){ // After the path has been completed, close the grabber
+                manipulator.closePincher();
+                state ++;
+                stateStartTime = timeMan.get();
+            }
 
+        }
+
+        else{
+            isFinished = true;
         }
     }
 
