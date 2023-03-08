@@ -31,6 +31,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     private final SimpleMotorFeedforward elevatorFeedforwardController = new SimpleMotorFeedforward(0 * Constants.VOLTAGE_TO_PERCENT_POWER, 0 * Constants.VOLTAGE_TO_PERCENT_POWER);
     
     public double extesnionOffset = 0;
+    public double elevatorOffset = 0;
     // values for pid controllers determined experimantally
     private final ProfiledPIDController elevatorPIDController = 
         new ProfiledPIDController(
@@ -56,6 +57,8 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
         //register();
         extendorNeo.setIdleMode(IdleMode.kBrake);
         elevatorNeo.setIdleMode(IdleMode.kBrake);
+        closePincher();
+        pivotBack();
     }
 
     
@@ -77,11 +80,11 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     }
 
     // These setpoints are in meters from their resting position
-    private double elevatorSetPoint = Constants.ELEVATOR_MAX + 0.1;
-    private double extendorSetPoint = Constants.ELEVATOR_MAX / 2.0;
+    private double elevatorSetPoint = Constants.ELEVATOR_START_HEIGHT + 0.1;
+    private double extendorSetPoint = 0.2;
 
-    public boolean manualElevatorControl = false;
-    public boolean manualExtendorControl = false;
+    public boolean manualElevatorControl = true;
+    public boolean manualExtendorControl = true;
 
     public void increaseElevator(double amount){
         //if(elevatorSetPoint + amount < Constants.ELEVATOR_MAX && elevatorSetPoint + amount > Constants.ELEVATOR_MIN){
@@ -143,7 +146,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
         double height = Constants.ELEVATOR_START_HEIGHT;
         height += -elevatorEncoder.getPosition() * (1.0/11.2) * 0.1333; // gearing ratio is currently 12:1
         // TODO: add another constant multiplier for converting rotations to chain length movement
-        return height;
+        return -elevatorEncoder.getPosition() * (1.0/11.2) * 0.1333 - elevatorOffset + Constants.ELEVATOR_START_HEIGHT;
     }
 
     /**
@@ -153,7 +156,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
         double extension = extesnionOffset;
         // extension -= -extendorEncoder.getPosition() * (1.0/4.0); // gearing ratio is currently 4:1
         // TODO: add another constant multiplier for converting rotations to chain length movement
-        return -extendorEncoder.getPosition() * (1.0/4.0) - extesnionOffset;
+        return extendorEncoder.getPosition() * (1.0/4.0) - extesnionOffset;
     }
 
     @Override
@@ -194,16 +197,17 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
         double extendorCommand = extendorPID;
 
         if(!manualElevatorControl){
-            //elevatorNeo.set(-elevatorCommand);
+            elevatorNeo.set(-elevatorCommand);
         }
         if(!manualExtendorControl){
-            extendorNeo.set(-extendorCommand);
+            extendorNeo.set(extendorCommand);
         }
         
         //elevatorNeo.set(elevatorFeedforward + elevatorPID);
         //extendorNeo.set(extendorPID);
         
         // print useful information
+        SmartDashboard.putBoolean("manualControl", manualElevatorControl);
         SmartDashboard.putNumber("Elevator setpoint", elevatorSetPoint);
         SmartDashboard.putNumber("Elevator Height", getHeight());
         SmartDashboard.putNumber("Extension Distance", getExtension());

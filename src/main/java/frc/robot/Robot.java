@@ -112,7 +112,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    driveWithJoystick(false);
+    driveWithJoystick(true);
     double angle = m_swerve.getHeading();
     //Vision.updatePosition(angle);
     m_swerve.updateOdometry();
@@ -120,7 +120,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Pos y", m_swerve.getPose().getY());
     SmartDashboard.putNumber("Heading", angle);
     SmartDashboard.putNumber("navx raw heading", m_swerve.navx.getAngle());
-    SmartDashboard.putBoolean("Navx connected", m_swerve.navx.isConnected());   
+    SmartDashboard.putBoolean("Navx connected", m_swerve.navx.isConnected());
+    SmartDashboard.putBoolean("is blue", Constants.IS_BLUE);   
   }
 
 
@@ -147,19 +148,23 @@ public class Robot extends TimedRobot {
   private void driveWithJoystick(boolean fieldRelative) {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
-    final var xSpeed = -m_xspeedLimiter.calculate(getLeftY()) * Drivetrain.kMaxSpeed;
+    var xSpeed = -m_xspeedLimiter.calculate(getLeftY()) * Drivetrain.kMaxSpeed;
     
     // Get the y speed or sideways/strafe speed. We are inverting this because
     // we want a positive value when we pull to the left. Xbox controllers
     // return positive values when you pull to the right by default.
-    final var ySpeed = -m_yspeedLimiter.calculate(getLeftX()) * Drivetrain.kMaxSpeed;
+    var ySpeed = -m_yspeedLimiter.calculate(getLeftX()) * Drivetrain.kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
     // positive value when we pull to the left (remember, CCW is positive in
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
-    final var rot = -m_rotLimiter.calculate(m_controller.getRightX()) * Drivetrain.kMaxAngularSpeed;
+    var rot = -m_rotLimiter.calculate(m_controller.getRightX()) * Drivetrain.kMaxAngularSpeed;
 
+    if(!Constants.IS_BLUE){
+      xSpeed = -xSpeed;
+      ySpeed = -ySpeed;
+    }
     m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative);
     
     SmartDashboard.putNumber("Lidar Readout", Lidar.getDistance());

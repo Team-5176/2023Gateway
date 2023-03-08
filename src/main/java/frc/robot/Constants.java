@@ -58,8 +58,8 @@ public final class Constants {
     public final static double CONTROLLER_DRIVE_DEADZONE = 0.1;
     public final static double FL_K = 104.587998;//-98.532904;//-158.347000;//90.0 - 197.247845;//339.726057;//340.826983;
     public final static double FR_K = 126.514780;//117.432138;//90.0 - 195.412968;
-    public final static double BR_K = 75.321707;//114.218204;//90.0 - 137.342005;
-    public final static double BL_K = -107.979622;//131.101973;//90.0 - 149.176963;
+    public final static double BR_K = 65.963834 + 180.0;//75.321707;//114.218204;//90.0 - 137.342005;
+    public final static double BL_K = 31.651631 + 180.0;//-107.979622;//131.101973;//90.0 - 149.176963;
 
     public static final double SWERVE_DRIVE_MULTIPLIER = 1;
 	public static final double SWERVE_TELEOP_MULTIPLIER = 1;//0.4;
@@ -68,7 +68,9 @@ public final class Constants {
     // object manipulator constants
     public static final int ELEVATOR_ID = 9;
     public static final int EXTENDOR_ID = 10;
-    public static final double ELEVATOR_MAX = 1.0795;
+    public static final double INTAKE_EXTENSION_DISTANCE = 4.7;
+    public static final double MAX_EXTENSION = 11.0;
+    public static final double ELEVATOR_MAX = 0.762;
     public static final double ELEVATOR_MIN = 0;
     public static final double ELEVATOR_SLOW = 0.1;
     public static final double ELEVATOR_DEADZONE = 0.1;
@@ -81,7 +83,7 @@ public final class Constants {
     public static final int PIVOT_SOLENOID_REVERSE = 0;
 
     // starting height in m of elevator, where 0 is all the way lowered with the bearing against the hardstop (currently set to a very rough estimate)
-    public static final double ELEVATOR_START_HEIGHT = ELEVATOR_MAX;
+    public static final double ELEVATOR_START_HEIGHT = 0.15875;
 
     //pilot controller outputs
     public static final int ELEVATOR_UP = 2;
@@ -107,13 +109,13 @@ public final class Constants {
     public static final int DESIGNATE_RESET = 9;
 
     //
-    public static final double INTAKE_EXTENSION_DISTANCE = 2.7;
+    
 
     static class VisionConstants {
         static final Transform3d robotToCam =
                 new Transform3d(
                     //0.127
-                        new Translation3d(0.10, -0.0762, 0.4318),
+                        new Translation3d(0.127, 0.0, 0.4318),
                         new Rotation3d(
                                 0, 0, //2.64
                                 Math.toRadians(6.0))); // Cam mounted facing forward, half a meter forward of center, half a meter up
@@ -156,7 +158,11 @@ public final class Constants {
         
     }
 
-    public static int AUTO = 1;
+    // Auto 1: Starts on blue driver right, places cube high, gets mobility
+    // Auto 2: Starts middle, places cube high, tries to cross charging station
+    // Auto 3: 
+    // places cube middle then exits over charging stations
+    public static int AUTO = 3;
     public static boolean IS_BLUE = false;
     static class AutonomousPaths {
         static final PathPlannerTrajectory path1_1 = PathPlanner.loadPath("1-1", new PathConstraints(2.5, 1.0));
@@ -166,5 +172,8 @@ public final class Constants {
         static final PathPlannerTrajectory path1_1Red = PathPlanner.loadPath("1-1 Red", new PathConstraints(2.5, 1.0));
         static final PathPlannerTrajectory path1_2Red = PathPlanner.loadPath("1-2 Red", new PathConstraints(2.5, 1.0));
         static final PathPlannerTrajectory path2_1Red = PathPlanner.loadPath("2-1 Red", new PathConstraints(2.5, 1.0));
+    
+        static final PathPlannerTrajectory path3_1 = PathPlanner.loadPath("3-1", new PathConstraints(2.5, 1.0));
+        static final PathPlannerTrajectory path3_1Red = PathPlanner.loadPath("3-1 Red", new PathConstraints(2.5, 1.0));
     }
 }
