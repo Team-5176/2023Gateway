@@ -14,10 +14,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class ManipulatorCommand extends CommandBase{
     
-    public ObjectManipulatorSubsystem manipulator;
-    public ManipulatorCommand(ObjectManipulatorSubsystem sub){
-        manipulator = sub;
-        addRequirements(sub);
+    public ManipulatorCommand(){
+        
     }
 
     public int designateStep = 0;
@@ -38,47 +36,43 @@ public class ManipulatorCommand extends CommandBase{
         SmartDashboard.putNumber("Designate step", designateStep);
 
         if(Robot.m_controller.getRawButton(Constants.ELEVATOR_UP)){
-            manipulator.increaseElevator(0.5);
-            manipulator.manualElevatorControl = true;
+
         }
         else if(Robot.m_controller.getRawButton(Constants.ELEVATOR_DOWN)){
-            manipulator.increaseElevator(-0.5);
-            manipulator.manualElevatorControl = true;
+           
         }
         else{
-            manipulator.increaseElevator(0.0); 
+             
         }
 
         if(Robot.m_controller.getRawButton(Constants.CLOSE_GRABBER)){
-            manipulator.closePincher();
+            
         }
         if(Robot.m_controller.getRawButton(Constants.OPEN_GRABBER)){
-            manipulator.openPincher();
+            
         }
         if(Robot.m_controller.getRawButton(Constants.PIVOT_BACK)){
-            manipulator.pivotBack();
+            
         }
         if(Robot.m_controller.getRawButton(Constants.PIVOT_FORWARD)){
-            manipulator.pivotForward();
+            
         }
         if(Robot.m_copilot_controller.getRawButton(Constants.EXTEND)){
-            manipulator.manualExtend(0.5);
-            manipulator.manualExtendorControl = true;
+            
         }
         else if(Robot.m_copilot_controller.getRawButton(Constants.RETRACT)){
-            manipulator.manualExtend(-0.5);
-            manipulator.manualExtendorControl = true;
+            
         } else{
-            manipulator.manualExtend(0.0);
+            
         }
         if(Robot.m_copilot_controller.getRawButton(Constants.MOVE_ELEVATOR_MAX)){
-            manipulator.setElevator(Constants.ELEVATOR_MAX + 1.5);
+            
         }
         if(Robot.m_copilot_controller.getRawButton(Constants.MOVE_ELEVATOR_MIN)){
-            manipulator.setElevator(Constants.ELEVATOR_MIN - 1.5);
+            
         }
         if(Robot.m_copilot_controller.getRawButton(Constants.STOW_ELEVATOR)){
-            manipulator.setElevator(0.5);
+            
         }
         
         if(designateStep <= 1){
@@ -137,18 +131,13 @@ public class ManipulatorCommand extends CommandBase{
                 new PathPoint(targetPose.getTranslation(), targetPose.getRotation(), targetPose.getRotation()) // position, heading(direction of travel), holonomic rotation
             );
             if(designations[2] == -1){
-                manipulator.setElevator(0.3); 
-                manipulator.setExtendor(Constants.INTAKE_EXTENSION_DISTANCE);
+                
             }
             else if(designations[2] == 0){
-                manipulator.setElevator(0.953);
-                manipulator.setExtendor(8.0);
-                manipulator.pivotForward();
+                
             }
             else if(designations[2] == 1){
-                manipulator.setElevator(Constants.ELEVATOR_MAX + 2);
-                manipulator.setExtendor(10.5);
-                manipulator.pivotForward();
+                
             }
             pathStartTime = Timer.getFPGATimestamp();
         }

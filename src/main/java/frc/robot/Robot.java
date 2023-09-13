@@ -29,8 +29,7 @@ public class Robot extends TimedRobot {
   public static final XboxController m_controller = new XboxController(0);
   public static final XboxController m_copilot_controller = new XboxController(1);
   public static Drivetrain m_swerve;
-  private final ObjectManipulatorSubsystem manipulator = new ObjectManipulatorSubsystem();
-  private final ManipulatorCommand manipulatorCommand = new ManipulatorCommand(manipulator);
+  private final ManipulatorCommand manipulatorCommand = new ManipulatorCommand();
   private Auto auto;// = new Auto(manipulator, m_swerve, 0);
 
   // Slew rate limiters to make joystick inputs more gentle; 1/2 sec from 0 to 1.
@@ -48,7 +47,6 @@ public class Robot extends TimedRobot {
 
   
   public Robot(){
-    manipulator.setDefaultCommand(manipulatorCommand);
     m_swerve = new Drivetrain();
     
     
@@ -77,7 +75,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit(){
     balance = SmartDashboard.getBoolean("Attempt Charging Station", false);
     
-    auto = new Auto(manipulator, 0);
+    auto = new Auto( 0);
 
     //gets alliance color from driverStation and sets IS_BLUE acordingly;
     if(DriverStation.getAlliance() == Alliance.Red)
@@ -112,7 +110,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    driveWithJoystick(true);
+    driveWithJoystick(false);
     double angle = m_swerve.getHeading();
     //Vision.updatePosition(angle);
     m_swerve.updateOdometry();

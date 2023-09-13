@@ -65,25 +65,6 @@ public final class Constants {
 	public static final double SWERVE_TELEOP_MULTIPLIER = 1;//0.4;
 	public static boolean ARE_WE_IN_TELEOP = false;
 
-    // object manipulator constants
-    public static final int ELEVATOR_ID = 9;
-    public static final int EXTENDOR_ID = 10;
-    public static final double INTAKE_EXTENSION_DISTANCE = 4.7;
-    public static final double MAX_EXTENSION = 11.0;
-    public static final double ELEVATOR_MAX = 0.762;
-    public static final double ELEVATOR_MIN = 0;
-    public static final double ELEVATOR_SLOW = 0.1;
-    public static final double ELEVATOR_DEADZONE = 0.1;
-    public static final int TOP_LIMIT_SWITCH_DIO_PIN = 0;
-    public static final int BOTTOM_LIMIT_SWITCH_DIO_PIN = 1;
-
-    public static final int PINCHER_SOLENOID_FORWARD = 2;
-    public static final int PINCHER_SOLENOID_REVERSE = 3;
-    public static final int PIVOT_SOLENOID_FORWARD = 1;
-    public static final int PIVOT_SOLENOID_REVERSE = 0;
-
-    // starting height in m of elevator, where 0 is all the way lowered with the bearing against the hardstop (currently set to a very rough estimate)
-    public static final double ELEVATOR_START_HEIGHT = 0.15875;
 
     //pilot controller outputs
     public static final int ELEVATOR_UP = 2;

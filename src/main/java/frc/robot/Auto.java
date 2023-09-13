@@ -16,18 +16,16 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class Auto extends CommandBase{
     //private Drivetrain m_swerve;
-    private ObjectManipulatorSubsystem manipulator;
+    
     private int route = 0;
 
     private Timer timeMan = new Timer();
     private double stateStartTime;
     private boolean isFinished = false;
     
-    public Auto(ObjectManipulatorSubsystem m, int pathNumber){
+    public Auto(int pathNumber){
         
-        manipulator = m;
         route = pathNumber;
-        addRequirements(m);
     }
 
     // This will load the file "Example Path.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
@@ -81,17 +79,6 @@ public class Auto extends CommandBase{
         Robot.m_swerve.yController.reset();
         Robot.m_swerve.rotController.reset();
 
-        //reset extension offset so that the extendor thinks it is starting at distance 0
-        manipulator.extesnionOffset += manipulator.getExtension();
-        manipulator.elevatorOffset += manipulator.getHeight() - Constants.ELEVATOR_START_HEIGHT;
-        //configure manipulator
-        manipulator.closePincher();
-        manipulator.pivotForward();
-        manipulator.manualElevatorControl = true;
-        manipulator.increaseElevator(Constants.ELEVATOR_SLOW);
-        manipulator.manualExtendorControl = true;
-        manipulator.manualExtend(-0.15);
-        //manipulator.setElevator(Constants.ELEVATOR_MAX + 3);
 
     }
 
@@ -139,21 +126,18 @@ public class Auto extends CommandBase{
             //SmartDashboard.putNumber("sdfjaoisdjfoaiejoijwofw", Timer.getFPGATimestamp() - stateStartTime);
             if(Timer.getFPGATimestamp() - stateStartTime > 2.0){
                 
-                manipulator.setElevator(Constants.ELEVATOR_MAX + 1);
             }
             if(Timer.getFPGATimestamp() - stateStartTime > 3.50){
-                manipulator.setExtendor(Constants.MAX_EXTENSION);
                 state ++;
                 stateStartTime = Timer.getFPGATimestamp();
             }
         }
         else if(state == 1){ //wait 3 seconds while the extendor extends and the grabber pivots out before openning the grabber and releasing the first cone
             if(Timer.getFPGATimestamp() - stateStartTime > 2.0){
-                manipulator.setElevator(0.6);
+        
             }
             if(Timer.getFPGATimestamp() - stateStartTime > 3.0){
                 
-                manipulator.openPincher();
                 
                 // These two things are done after every state change
                 state ++;
@@ -163,8 +147,6 @@ public class Auto extends CommandBase{
         }
         else if(state == 2){ //waits half a second so that the cone can drop before pulling the extendor in
             if(Timer.getFPGATimestamp() - stateStartTime > .5){ 
-                manipulator.setExtendor(Constants.INTAKE_EXTENSION_DISTANCE);
-
                 state ++;
                 stateStartTime = Timer.getFPGATimestamp();
             }
@@ -173,10 +155,9 @@ public class Auto extends CommandBase{
             Robot.m_swerve.matchPath((PathPlannerState)path1.sample(Timer.getFPGATimestamp() - stateStartTime));
             if(Timer.getFPGATimestamp() - stateStartTime > 2.0){ // After it has been driving for two seconds, set the elevator all the way down and picot back the intake
                 //manipulator.setElevator(Constants.ELEVATOR_MIN - 2);
-                manipulator.pivotBack();
             }
             if(path1.getTotalTimeSeconds() < Timer.getFPGATimestamp() - stateStartTime){ // After the path has been completed, close the grabber
-                manipulator.closePincher();
+                
                 state += 1;
                 stateStartTime = Timer.getFPGATimestamp();
             }
@@ -204,23 +185,18 @@ public class Auto extends CommandBase{
         if(state == 0){
             //SmartDashboard.putNumber("sdfjaoisdjfoaiejoijwofw", Timer.getFPGATimestamp() - stateStartTime);
             if(Timer.getFPGATimestamp() - stateStartTime > 2.0){
-                
-                manipulator.setElevator(Constants.ELEVATOR_MAX + 1);
-            }
+                            }
             if(Timer.getFPGATimestamp() - stateStartTime > 3.50){
-                manipulator.setExtendor(Constants.MAX_EXTENSION);
                 state ++;
                 stateStartTime = Timer.getFPGATimestamp();
             }
         }
         else if(state == 1){ //wait 3 seconds while the extendor extends and the grabber pivots out before openning the grabber and releasing the first cone
             if(Timer.getFPGATimestamp() - stateStartTime > 2.0){
-                manipulator.setElevator(0.6);
+
             }
             if(Timer.getFPGATimestamp() - stateStartTime > 3.0){
-                
-                manipulator.openPincher();
-                
+                                
                 // These two things are done after every state change
                 state ++;
                 stateStartTime = Timer.getFPGATimestamp();
@@ -229,7 +205,6 @@ public class Auto extends CommandBase{
         }
         else if(state == 2){ //waits half a second so that the cone can drop before pulling the extendor in
             if(Timer.getFPGATimestamp() - stateStartTime > .5){ 
-                manipulator.setExtendor(Constants.INTAKE_EXTENSION_DISTANCE);
 
                 state ++;
                 stateStartTime = Timer.getFPGATimestamp();
@@ -239,10 +214,8 @@ public class Auto extends CommandBase{
             Robot.m_swerve.matchPath((PathPlannerState)path1.sample(Timer.getFPGATimestamp() - stateStartTime));
             if(Timer.getFPGATimestamp() - stateStartTime > 2.0){ // After it has been driving for two seconds, set the elevator all the way down and picot back the intake
                 //manipulator.setElevator(Constants.ELEVATOR_MIN - 2);
-                manipulator.pivotBack();
             }
             if(path1.getTotalTimeSeconds() < Timer.getFPGATimestamp() - stateStartTime){ // After the path has been completed, close the grabber
-                manipulator.closePincher();
                 state += 1;
                 stateStartTime = Timer.getFPGATimestamp();
             }
@@ -269,14 +242,11 @@ public class Auto extends CommandBase{
     private void auto2(){
         if(state == 0){
             if(Timer.getFPGATimestamp() - stateStartTime > 1.0){
-                manipulator.setExtendor(Constants.MAX_EXTENSION);
+
             }
         }
         else if(state == 1){
             if(Timer.getFPGATimestamp() - stateStartTime >3.0){
-
-                manipulator.openPincher();
-
                 state++;
                 stateStartTime=Timer.getFPGATimestamp();
             }
@@ -284,7 +254,6 @@ public class Auto extends CommandBase{
 
        else if(state == 2){
             if(Timer.getFPGATimestamp() - stateStartTime >.5){
-                manipulator.setExtendor(Constants.INTAKE_EXTENSION_DISTANCE);
 
                 state++;
                 stateStartTime=Timer.getFPGATimestamp();
@@ -294,7 +263,6 @@ public class Auto extends CommandBase{
        else if(state == 3){
             Robot.m_swerve.matchPath((PathPlannerState)path1.sample(Timer.getFPGATimestamp() - stateStartTime));
             if(path1.getTotalTimeSeconds() < Timer.getFPGATimestamp() - stateStartTime){ // After the path has been completed, close the grabber
-                manipulator.closePincher();
                 state ++;
                 stateStartTime = Timer.getFPGATimestamp();
             }
@@ -307,10 +275,7 @@ public class Auto extends CommandBase{
     private void auto100000(){
         if(state == 0){
             if(Timer.getFPGATimestamp() - stateStartTime > 2.0){
-                manipulator.setExtendor(Constants.INTAKE_EXTENSION_DISTANCE);
-                manipulator.openPincher();
-                manipulator.pivotForward();
-                manipulator.setElevator(0.6);
+
                 state ++;
                 stateStartTime = Timer.getFPGATimestamp();
             }
@@ -318,23 +283,18 @@ public class Auto extends CommandBase{
         else if (state == 1){ // Begin driving to the first cube
             Robot.m_swerve.matchPath((PathPlannerState)path1.sample(Timer.getFPGATimestamp() - stateStartTime));
             if(Timer.getFPGATimestamp() - stateStartTime > 2.0){ // After it has been driving for two seconds, set the elevator all the way down and picot back the intake
-                manipulator.setElevator(Constants.ELEVATOR_MIN - 2);
-                manipulator.pivotBack();
+
             }
             if(path1.getTotalTimeSeconds() < Timer.getFPGATimestamp() - stateStartTime){ // After the path has been completed, close the grabber
-                manipulator.closePincher();
                 state += 1;
                 stateStartTime = Timer.getFPGATimestamp();
             }
         }else if(state == 2){
             Robot.m_swerve.matchPath((PathPlannerState)path2.sample(Timer.getFPGATimestamp() - stateStartTime));
             if(Timer.getFPGATimestamp() - stateStartTime > 2){
-                manipulator.setElevator(Constants.ELEVATOR_MAX + 2);
-                manipulator.pivotForward();
-                manipulator.setExtendor(10.0);
+
             }
             if(path2.getTotalTimeSeconds() < Timer.getFPGATimestamp() - stateStartTime){
-                manipulator.openPincher();
                 state ++;
                 stateStartTime = Timer.getFPGATimestamp();
             }
