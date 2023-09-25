@@ -34,10 +34,10 @@ public final class Constants {
     public final static int BR_DRIVE_ID = 1;
     public final static int FR_DRIVE_ID = 3;
 
-    public final static int FL_TURN_ID = 6;
-    public final static int BL_TURN_ID = 8;
-    public final static int BR_TURN_ID = 2;
-    public final static int FR_TURN_ID = 4;
+    public final static int FL_TURN_ID = 4;
+    public final static int BL_TURN_ID = 2;
+    public final static int BR_TURN_ID = 8;
+    public final static int FR_TURN_ID = 6;
 
     public final static int FL_MA3_ID = 1;
     public final static int FR_MA3_ID = 2;
@@ -56,7 +56,7 @@ public final class Constants {
     public final static double BL_K = 90.0 - 203.75;*/
 
     public final static double CONTROLLER_DRIVE_DEADZONE = 0.1;
-    public final static double FL_K = 104.587998;//-98.532904;//-158.347000;//90.0 - 197.247845;//339.726057;//340.826983;
+    public final static double FL_K = -20.146355 + 94;//-98.532904;//-158.347000;//90.0 - 197.247845;//339.726057;//340.826983; //i offset this one by 180 degrees, hopefully that does something
     public final static double FR_K = 126.514780;//117.432138;//90.0 - 195.412968;
     public final static double BR_K = 65.963834 + 180.0;//75.321707;//114.218204;//90.0 - 137.342005;
     public final static double BL_K = 31.651631 + 180.0;//-107.979622;//131.101973;//90.0 - 149.176963;

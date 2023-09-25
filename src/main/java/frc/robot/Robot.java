@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+
+import java.util.Collection;
 import java.util.Map;
 
 import com.pathplanner.lib.PathConstraints;
@@ -23,6 +25,19 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.util.LidarLite;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.util.MA3AnalogEncoder;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.revrobotics.RelativeEncoder;
+import com.ctre.phoenix.music.*;
 
 
 public class Robot extends TimedRobot {
@@ -48,6 +63,7 @@ public class Robot extends TimedRobot {
   
   public Robot(){
     m_swerve = new Drivetrain();
+    //Orchestra orch = new Orchestra(new Collection() { new TalonFX(Constants.FL_DRIVE_ID), new TalonFX(Constants.FR_DRIVE_ID), new TalonFX(Constants.BL_DRIVE_ID), new TalonFX(Constants.BR_DRIVE_ID)}, "src/main/deploy/PINOMN.chrp");
     
     
   }
@@ -120,6 +136,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("navx raw heading", m_swerve.navx.getAngle());
     SmartDashboard.putBoolean("Navx connected", m_swerve.navx.isConnected());
     SmartDashboard.putBoolean("is blue", Constants.IS_BLUE);   
+    SmartDashboard.putNumber("FL_ENCODER", m_swerve.m_frontLeft.m_turningEncoder.getRotation().getDegrees());
+    SmartDashboard.putNumber("FR_ENCODER", m_swerve.m_frontRight.m_turningEncoder.getRotation().getDegrees());
+    SmartDashboard.putNumber("BL_ENCODER", m_swerve.m_backLeft.m_turningEncoder.getRotation().getDegrees());
+    SmartDashboard.putNumber("BR_ENCODER", m_swerve.m_backRight.m_turningEncoder.getRotation().getDegrees());
   }
 
 
@@ -131,7 +151,7 @@ public class Robot extends TimedRobot {
     }  else if(m_controller.getLeftY() < -Constants.CONTROLLER_DRIVE_DEADZONE){
       response = (m_controller.getLeftY() + Constants.CONTROLLER_DRIVE_DEADZONE);
     }
-    return response;
+    return -response;
   }
   private double getLeftX(){
     double response = 0;
@@ -140,7 +160,7 @@ public class Robot extends TimedRobot {
     }  else if(m_controller.getLeftX() < -Constants.CONTROLLER_DRIVE_DEADZONE){
       response = (m_controller.getLeftX() + Constants.CONTROLLER_DRIVE_DEADZONE);
     }
-    return response;
+    return -response;
   }
 
   private void driveWithJoystick(boolean fieldRelative) {
