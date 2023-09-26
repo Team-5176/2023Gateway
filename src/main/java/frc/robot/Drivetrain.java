@@ -116,11 +116,11 @@ public class Drivetrain extends SubsystemBase{
   @SuppressWarnings("ParameterName")
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     double heading = getHeading();
-    //if(!Constants.IS_BLUE && fieldRelative){
-    //  xSpeed = -xSpeed;
-    //  ySpeed = -ySpeed;
-    //  rot = -rot;
-    //}
+    if(!Constants.IS_BLUE && fieldRelative){
+      xSpeed = -xSpeed;
+      ySpeed = -ySpeed;
+      rot = -rot;
+    }
     var swerveModuleStates =
         m_kinematics.toSwerveModuleStates(
             fieldRelative
