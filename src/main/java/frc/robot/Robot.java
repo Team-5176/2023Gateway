@@ -121,7 +121,7 @@ public class Robot extends TimedRobot {
       //initiate swerve based on starting position specified in SmartDashboard. I rounded before converting to int just in case there are any double shenanigans
       m_swerve = new Drivetrain();
     }
-    //m_swerve.navx.reset();
+    m_swerve.navx.reset();
   }
 
   @Override
