@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     PathPlannerServer.startServer(5811);
-    //musicMan();
+    //musicMan("PINOMN");
     //Send these values to SmartDashboard so that they can be used to choose what auto to do. 
     //SmartDashboard.putBoolean("Attempt Charging Station", false);
     //SmartDashboard.putNumber("Starting position", 0);
@@ -189,13 +189,13 @@ public class Robot extends TimedRobot {
   }
 
 
-  void musicMan(){
+  void musicMan(String file){
     Orchestra orch = new Orchestra();
     orch.addInstrument(new TalonFX(Constants.FL_DRIVE_ID));
     orch.addInstrument(new TalonFX(Constants.FR_DRIVE_ID));
     orch.addInstrument(new TalonFX(Constants.BL_DRIVE_ID));
     orch.addInstrument(new TalonFX(Constants.BR_DRIVE_ID));
-    orch.loadMusic("src/main/deploy/PINOMN.chrp");
+    orch.loadMusic("src/main/deploy/" + file + ".chrp");
     orch.play();
   }
 
