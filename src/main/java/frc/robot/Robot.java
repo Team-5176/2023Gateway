@@ -62,15 +62,14 @@ public class Robot extends TimedRobot {
 
   
   public Robot(){
-    m_swerve = new Drivetrain();
-    //Orchestra orch = new Orchestra(new Collection() { new TalonFX(Constants.FL_DRIVE_ID), new TalonFX(Constants.FR_DRIVE_ID), new TalonFX(Constants.BL_DRIVE_ID), new TalonFX(Constants.BR_DRIVE_ID)}, "src/main/deploy/PINOMN.chrp");
-    
+    m_swerve = new Drivetrain();    
     
   }
 
   @Override
   public void robotInit() {
     PathPlannerServer.startServer(5811);
+    //musicMan();
     //Send these values to SmartDashboard so that they can be used to choose what auto to do. 
     //SmartDashboard.putBoolean("Attempt Charging Station", false);
     //SmartDashboard.putNumber("Starting position", 0);
@@ -187,6 +186,17 @@ public class Robot extends TimedRobot {
     
     SmartDashboard.putNumber("Lidar Readout", Lidar.getDistance());
     
+  }
+
+
+  void musicMan(){
+    Orchestra orch = new Orchestra();
+    orch.addInstrument(new TalonFX(Constants.FL_DRIVE_ID));
+    orch.addInstrument(new TalonFX(Constants.FR_DRIVE_ID));
+    orch.addInstrument(new TalonFX(Constants.BL_DRIVE_ID));
+    orch.addInstrument(new TalonFX(Constants.BR_DRIVE_ID));
+    orch.loadMusic("src/main/deploy/PINOMN.chrp");
+    orch.play();
   }
 
 }
