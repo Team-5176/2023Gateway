@@ -65,19 +65,26 @@ public final class Constants {
 	public static final double SWERVE_TELEOP_MULTIPLIER = 1;//0.4;
 	public static boolean ARE_WE_IN_TELEOP = false;
 
+    //object manipulator constants
+    public static final int PIVOT_ID = 9;
+    public static final int LWHEELS_ID = 11;
+    public static final int RWHEELS_ID = 12;
 
-    //pilot controller outputs
+
+    /*pilot controller outputs
     public static final int ELEVATOR_UP = 2;
     public static final int ELEVATOR_DOWN = 3;
     public static final int CLOSE_GRABBER = 6;
     public static final int OPEN_GRABBER = 5;
     public static final int PIVOT_FORWARD = 4;
-    public static final int PIVOT_BACK = 1;
+    public static final int PIVOT_BACK = 1; */
     public static final int EXECUTE_AUTO = 7; //TODO: pick actual binding
     public static final int STOP_AUTO = 8;
+    public static final int SUCK_IN = 2;
+    public static final int PUSH_OUT = 3;
     
 
-    //copilot controllor
+    /*copilot controllor
     public static final int MOVE_ELEVATOR_MAX = 6;
     public static final int MOVE_ELEVATOR_MIN = 5;
     public static final int STOW_ELEVATOR = 4;
@@ -87,7 +94,9 @@ public final class Constants {
     public static final int DESIGNATE_UP = 4;
     public static final int DESIGNATE_LEFT = 3;
     public static final int DESIGNATE_RIGHT = 2;
-    public static final int DESIGNATE_RESET = 9;
+    public static final int DESIGNATE_RESET = 9; */
+    public static final int PIVOT_OUT = 2;
+    public static final int PIVOT_IN = 3;
 
     //
     

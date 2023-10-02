@@ -14,8 +14,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class ManipulatorCommand extends CommandBase{
     
-    public ManipulatorCommand(){
-        
+    public ObjectManipulatorSubsystem manipulator;
+    public ManipulatorCommand(ObjectManipulatorSubsystem sub){
+        manipulator = sub;
+        addRequirements(sub);
     }
 
     public int designateStep = 0;
@@ -35,85 +37,28 @@ public class ManipulatorCommand extends CommandBase{
         SmartDashboard.putNumber("test???", 74);
         SmartDashboard.putNumber("Designate step", designateStep);
 
-        if(Robot.m_controller.getRawButton(Constants.ELEVATOR_UP)){
-
+        if(Robot.m_controller.getRawButton(Constants.SUCK_IN)){
+            manipulator.suckIn();
         }
-        else if(Robot.m_controller.getRawButton(Constants.ELEVATOR_DOWN)){
-           
+        else if(Robot.m_controller.getRawButton(Constants.PUSH_OUT)){
+            manipulator.pushOut();
         }
         else{
-             
+            manipulator.hold();
         }
 
-        if(Robot.m_controller.getRawButton(Constants.CLOSE_GRABBER)){
-            
+        if(Robot.m_copilot_controller.getRawButton(Constants.PIVOT_OUT)){
+            manipulator.pivotOut(.5);
         }
-        if(Robot.m_controller.getRawButton(Constants.OPEN_GRABBER)){
-            
+        else if(Robot.m_controller.getRawButton(Constants.PIVOT_IN)){
+            manipulator.pivotIn(.5);
         }
-        if(Robot.m_controller.getRawButton(Constants.PIVOT_BACK)){
-            
+        else{
+            manipulator.pivotLock();
         }
-        if(Robot.m_controller.getRawButton(Constants.PIVOT_FORWARD)){
-            
-        }
-        if(Robot.m_copilot_controller.getRawButton(Constants.EXTEND)){
-            
-        }
-        else if(Robot.m_copilot_controller.getRawButton(Constants.RETRACT)){
-            
-        } else{
-            
-        }
-        if(Robot.m_copilot_controller.getRawButton(Constants.MOVE_ELEVATOR_MAX)){
-            
-        }
-        if(Robot.m_copilot_controller.getRawButton(Constants.MOVE_ELEVATOR_MIN)){
-            
-        }
-        if(Robot.m_copilot_controller.getRawButton(Constants.STOW_ELEVATOR)){
-            
-        }
+     
         
-        if(designateStep <= 1){
-            if(Robot.m_copilot_controller.getRawButtonReleased(Constants.DESIGNATE_LEFT)){
-                designations[designateStep] = 0;
-                designateStep ++;
-            }
-            if(Robot.m_copilot_controller.getRawButtonReleased(Constants.DESIGNATE_RIGHT)){
-                designations[designateStep] = 2;
-                designateStep ++;
-            }
-            if(Robot.m_copilot_controller.getRawButtonReleased(Constants.DESIGNATE_UP)){
-                designations[designateStep] = 1;
-                designateStep ++;
-            }
-            if(Robot.m_copilot_controller.getRawButtonReleased(Constants.DESIGNATE_DOWN)){
-                designations[designateStep] = 1;
-                designateStep ++;
-            }
-        }
-        else if(designateStep == 2){
-            if(Robot.m_copilot_controller.getRawButtonReleased(Constants.DESIGNATE_LEFT)){
-                designations[designateStep] = 0;
-                designateStep ++;
-            }
-            if(Robot.m_copilot_controller.getRawButtonReleased(Constants.DESIGNATE_RIGHT)){
-                designations[designateStep] = 0;
-                designateStep ++;
-            }
-            if(Robot.m_copilot_controller.getRawButtonReleased(Constants.DESIGNATE_UP)){
-                designations[designateStep] = 1;
-                designateStep ++;
-            }
-            if(Robot.m_copilot_controller.getRawButtonReleased(Constants.DESIGNATE_DOWN)){
-                designations[designateStep] = -1;
-                designateStep ++;
-            }
-        }
-        if(Robot.m_copilot_controller.getRawButtonReleased(Constants.DESIGNATE_RESET)){
-            designateStep = 0;
-        }
+       
 
         if(Robot.m_controller.getRawButtonPressed(Constants.EXECUTE_AUTO)){
             runningPath = true;

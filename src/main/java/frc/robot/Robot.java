@@ -44,7 +44,8 @@ public class Robot extends TimedRobot {
   public static final XboxController m_controller = new XboxController(0);
   public static final XboxController m_copilot_controller = new XboxController(1);
   public static Drivetrain m_swerve;
-  private final ManipulatorCommand manipulatorCommand = new ManipulatorCommand();
+  private final ObjectManipulatorSubsystem manipulator = new ObjectManipulatorSubsystem();
+  private final ManipulatorCommand manipulatorCommand = new ManipulatorCommand(manipulator);
   private Auto auto;// = new Auto(manipulator, m_swerve, 0);
 
   // Slew rate limiters to make joystick inputs more gentle; 1/2 sec from 0 to 1.
