@@ -70,7 +70,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     PathPlannerServer.startServer(5811);
-    //musicMan("PINOMN");
+    musicMan("PINOMN");
     //Send these values to SmartDashboard so that they can be used to choose what auto to do. 
     //SmartDashboard.putBoolean("Attempt Charging Station", false);
     //SmartDashboard.putNumber("Starting position", 0);
