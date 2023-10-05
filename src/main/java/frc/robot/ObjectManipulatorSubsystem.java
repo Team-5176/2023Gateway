@@ -55,13 +55,13 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
 
 
     public void suckIn(){
-        LWheelsNeo.set(-.1);
-        RWheelsNeo.set(-.1);
+        LWheelsNeo.set(.1);
+        RWheelsNeo.set(.1);
     }
 
     public void pushOut(){
-        LWheelsNeo.set(.1);
-        RWheelsNeo.set(.1);
+        LWheelsNeo.set(-.25);
+        RWheelsNeo.set(-.25);
 
     }
 
@@ -89,7 +89,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     public double getPivotPos(){
         double pos = Constants.INTAKE_START_POS;
         pos += (PivotEncoder.getPosition()*360)/64;
-        return 0.0;
+        return pos;
     }
 
 
@@ -98,11 +98,16 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
         return LWheelsNeo.get();
     }
 
+    public void setPivotPos(double pos){
+        manualControl = false;
+        pivotSetPoint = pos;
+    }
+
     public void periodic(){
         
 
         double PivotPid = PivotPIDController.calculate(getPivotPos(), pivotSetPoint);
-
+        //PivotNeo.set(PivotPid);
 
 
 
