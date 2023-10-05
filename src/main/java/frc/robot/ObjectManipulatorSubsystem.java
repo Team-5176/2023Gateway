@@ -28,7 +28,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     
     private final SimpleMotorFeedforward PivotFeedforwardController = new SimpleMotorFeedforward(0 * Constants.VOLTAGE_TO_PERCENT_POWER, 0 * Constants.VOLTAGE_TO_PERCENT_POWER);
 
-
+    private boolean manualControl; 
 
     private final ProfiledPIDController PivotPIDController = 
         new ProfiledPIDController(
@@ -50,7 +50,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
         PivotNeo.setIdleMode(IdleMode.kBrake);
         LWheelsNeo.setIdleMode(IdleMode.kBrake);
         RWheelsNeo.setIdleMode(IdleMode.kBrake);
-        LWheelsNeo.setInverted(true); //One side is gonna have to be inverted, im just not sure which one yet
+        LWheelsNeo.setInverted(true);
     }
 
 
@@ -71,10 +71,12 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     }
 
     public void pivotOut(double speed){
+        manualControl = true;
         PivotNeo.set(-speed);
     }
 
     public void pivotIn(double speed){
+        manualControl = true;
         PivotNeo.set(speed);
     }
 
@@ -83,13 +85,15 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     }
 
 
-    //TODO: make this return the position of the intake, possibly with 1 being in and 0 being out or something like that
+    //TODO: make this return the position of the intake in radians
     public double getPivotPos(){
+        double pos = Constants.INTAKE_START_POS;
+        pos += (PivotEncoder.getPosition()*360)/64;
         return 0.0;
     }
 
 
-    //returns the speed of the intake wheels between -1 and 1, assumes both sides share the same speed
+    //returns the speed of the intake wheels between -1 and 1, assumes both sides share the same speed, just inverted
     public double getSpeed(){
         return LWheelsNeo.get();
     }
@@ -98,6 +102,8 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
         
 
         double PivotPid = PivotPIDController.calculate(getPivotPos(), pivotSetPoint);
+
+
 
 
     }

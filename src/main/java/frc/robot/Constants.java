@@ -69,6 +69,9 @@ public final class Constants {
     public static final int PIVOT_ID = 9;
     public static final int LWHEELS_ID = 11;
     public static final int RWHEELS_ID = 12;
+    public static final double INTAKE_START_POS = 90;
+    public static final double INTAKE_MAX_POS = 200;
+    public static final double INTAKE_MIN_POS = 80;
 
 
     /*pilot controller outputs
