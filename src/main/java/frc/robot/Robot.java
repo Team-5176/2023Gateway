@@ -55,6 +55,7 @@ public class Robot extends TimedRobot {
   
   //LidarSensor
   private final LidarLite Lidar = new LidarLite(new DigitalInput(2));
+  public Orchestra orch;
 
 
   //variables to be populated from SmartDashboard, determine what auto to do
@@ -63,6 +64,7 @@ public class Robot extends TimedRobot {
 
   
   public Robot(){
+    manipulator.setDefaultCommand(manipulatorCommand);
     m_swerve = new Drivetrain();    
     
   }
@@ -70,7 +72,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     PathPlannerServer.startServer(5811);
-    musicMan("PINOMN");
+    //musicMan("PINOMN");
     //Send these values to SmartDashboard so that they can be used to choose what auto to do. 
     //SmartDashboard.putBoolean("Attempt Charging Station", false);
     //SmartDashboard.putNumber("Starting position", 0);
@@ -117,6 +119,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit(){
     manipulatorCommand.designateStep = 0;
+    //orch.play();
     if(m_swerve == null){
       //initiate swerve based on starting position specified in SmartDashboard. I rounded before converting to int just in case there are any double shenanigans
       m_swerve = new Drivetrain();
@@ -126,6 +129,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    //orch.play();
     driveWithJoystick(false);
     double angle = m_swerve.getHeading();
     //Vision.updatePosition(angle);
@@ -191,13 +195,12 @@ public class Robot extends TimedRobot {
 
 
   void musicMan(String file){
-    Orchestra orch = new Orchestra();
+    orch = new Orchestra();
     orch.addInstrument(new TalonFX(Constants.FL_DRIVE_ID));
     orch.addInstrument(new TalonFX(Constants.FR_DRIVE_ID));
     orch.addInstrument(new TalonFX(Constants.BL_DRIVE_ID));
     orch.addInstrument(new TalonFX(Constants.BR_DRIVE_ID));
-    orch.loadMusic("src/main/deploy/" + file + ".chrp");
-    orch.play();
+    orch.loadMusic("src/main/deploy/PINOMN.chrp");
   }
 
 }

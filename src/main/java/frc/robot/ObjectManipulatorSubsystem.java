@@ -55,13 +55,13 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
 
 
     public void suckIn(){
-        LWheelsNeo.set(-1);
-        RWheelsNeo.set(-1);
+        LWheelsNeo.set(-.1);
+        RWheelsNeo.set(-.1);
     }
 
     public void pushOut(){
-        LWheelsNeo.set(1);
-        RWheelsNeo.set(1);
+        LWheelsNeo.set(.1);
+        RWheelsNeo.set(.1);
 
     }
 
@@ -89,7 +89,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     }
 
 
-    //returns the speed of the intake wheels between -1 and 1, assumes both sides share the same speed, just inverted
+    //returns the speed of the intake wheels between -1 and 1, assumes both sides share the same speed
     public double getSpeed(){
         return LWheelsNeo.get();
     }

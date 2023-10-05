@@ -95,8 +95,8 @@ public final class Constants {
     public static final int DESIGNATE_LEFT = 3;
     public static final int DESIGNATE_RIGHT = 2;
     public static final int DESIGNATE_RESET = 9; */
-    public static final int PIVOT_OUT = 2;
-    public static final int PIVOT_IN = 3;
+    public static final int PIVOT_OUT = 1;
+    public static final int PIVOT_IN = 4;
 
     //
     
