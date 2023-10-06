@@ -89,7 +89,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     public double getPivotPos(){
         double pos = Constants.INTAKE_START_POS;
         pos += (PivotEncoder.getPosition()*360)/64;
-        return 0.0;
+        return pos;
     }
 
     public void setPivotSetPoint(double pivotSetPoint) {
@@ -100,6 +100,11 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     //returns the speed of the intake wheels between -1 and 1, assumes both sides share the same speed, just inverted
     public double getSpeed(){
         return LWheelsNeo.get();
+    }
+
+    public void setPivotPos(double pos){
+        manualControl = false;
+        pivotSetPoint = pos;
     }
 
     public void periodic(){

@@ -155,7 +155,7 @@ public final class Constants {
     // Auto 2: Starts middle, places cube high, tries to cross charging station
     // Auto 3: 
     // places cube middle then exits over charging stations
-    public static int AUTO = 3;
+    public static int AUTO = 1;
     public static boolean IS_BLUE = false;
     static class AutonomousPaths {
         static final PathPlannerTrajectory path1_1 = PathPlanner.loadPath("1-1", new PathConstraints(2.5, 1.0));

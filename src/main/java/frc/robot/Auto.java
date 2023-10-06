@@ -107,14 +107,14 @@ public class Auto extends CommandBase{
         if(true){
             auto1();
         }
-        /* 
-        else if(Constants.AUTO == 2){
-            auto2(); // places cube middle then exits over charging stations
+         
+       /* else if(Constants.AUTO == 2){
+            auto2();
         }
         else if (Constants.AUTO == 3){
-            auto3(); // places cube on blue left top shelf, then gets mobility
-        }
-        */
+            auto3();
+        } */
+        
         
         //if navx is disconnected, stop autonomous
         if(!Robot.m_swerve.navx.isConnected()){
