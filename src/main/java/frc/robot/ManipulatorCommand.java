@@ -48,10 +48,10 @@ public class ManipulatorCommand extends CommandBase{
         }
 
         if(Robot.m_copilot_controller.getRawButton(Constants.PIVOT_OUT)){
-            manipulator.pivotOut(.1);
+            manipulator.pivotOut(.25);
         }
         else if(Robot.m_copilot_controller.getRawButton(Constants.PIVOT_IN)){
-            manipulator.pivotIn(.1);
+            manipulator.pivotIn(.25);
         }
         else{
             manipulator.pivotLock();

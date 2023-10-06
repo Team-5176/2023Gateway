@@ -131,7 +131,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     //orch.play();
-    driveWithJoystick(false);
+    driveWithJoystick(true);
     double angle = m_swerve.getHeading();
     isAuto = false;
     m_swerve.updateOdometry();
@@ -185,8 +185,8 @@ public class Robot extends TimedRobot {
     var rot = -m_rotLimiter.calculate(m_controller.getRightX()) * Drivetrain.kMaxAngularSpeed;
 
     if(!Constants.IS_BLUE){
-      xSpeed = -xSpeed;
-      ySpeed = -ySpeed;
+      xSpeed = xSpeed;
+      ySpeed = ySpeed;
     }
     m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative);
     
