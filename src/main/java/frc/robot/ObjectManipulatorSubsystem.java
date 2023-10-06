@@ -55,13 +55,13 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
 
 
     public void suckIn(){
-        LWheelsNeo.set(-.1);
-        RWheelsNeo.set(-.1);
+        LWheelsNeo.set(.1);
+        RWheelsNeo.set(.1);
     }
 
     public void pushOut(){
-        LWheelsNeo.set(.1);
-        RWheelsNeo.set(.1);
+        LWheelsNeo.set(-.25);
+        RWheelsNeo.set(-.25);
 
     }
 
@@ -72,12 +72,12 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
 
     public void pivotOut(double speed){
         manualControl = true;
-        PivotNeo.set(-speed);
+        PivotNeo.set(speed);
     }
 
     public void pivotIn(double speed){
         manualControl = true;
-        PivotNeo.set(speed);
+        PivotNeo.set(-speed);
     }
 
     public void pivotLock(){
@@ -85,11 +85,15 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     }
 
 
-    //TODO: make this return the position of the intake in radians
+    //Returns intake position in degrees, vertical is 90;
     public double getPivotPos(){
         double pos = Constants.INTAKE_START_POS;
         pos += (PivotEncoder.getPosition()*360)/64;
         return 0.0;
+    }
+
+    public void setPivotSetPoint(double pivotSetPoint) {
+        this.pivotSetPoint = pivotSetPoint;
     }
 
 
@@ -103,6 +107,9 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
 
         double PivotPid = PivotPIDController.calculate(getPivotPos(), pivotSetPoint);
 
+        if(Robot.isAuto){
+            PivotNeo.set(PivotPid);
+        }
 
 
 

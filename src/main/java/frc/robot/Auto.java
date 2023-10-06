@@ -22,9 +22,10 @@ public class Auto extends CommandBase{
     private Timer timeMan = new Timer();
     private double stateStartTime;
     private boolean isFinished = false;
+    private ObjectManipulatorSubsystem manipulator;
     
-    public Auto(int pathNumber){
-        
+    public Auto(int pathNumber, ObjectManipulatorSubsystem sub){
+        manipulator = sub;
         route = pathNumber;
     }
 
@@ -103,8 +104,8 @@ public class Auto extends CommandBase{
         //SmartDashboard.putNumber("navx raw heading", Robot.m_swerve.navx.getAngle());
         
 
-        if(Constants.AUTO == 1){
-            auto1(); // 
+        if(true){
+            auto1();
         }
         /* 
         else if(Constants.AUTO == 2){
@@ -184,23 +185,22 @@ public class Auto extends CommandBase{
     private void auto1(){
         if(state == 0){
             //SmartDashboard.putNumber("sdfjaoisdjfoaiejoijwofw", Timer.getFPGATimestamp() - stateStartTime);
-            if(Timer.getFPGATimestamp() - stateStartTime > 2.0){
+            if(Timer.getFPGATimestamp() - stateStartTime > 0){
+                manipulator.setPivotSetPoint(170);
                             }
-            if(Timer.getFPGATimestamp() - stateStartTime > 3.50){
+            if(Timer.getFPGATimestamp() - stateStartTime > .5){
+                manipulator.pushOut();
                 state ++;
                 stateStartTime = Timer.getFPGATimestamp();
             }
         }
         else if(state == 1){ //wait 3 seconds while the extendor extends and the grabber pivots out before openning the grabber and releasing the first cone
-            if(Timer.getFPGATimestamp() - stateStartTime > 2.0){
-
-            }
-            if(Timer.getFPGATimestamp() - stateStartTime > 3.0){
-                                
-                // These two things are done after every state change
-                state ++;
+            if(Timer.getFPGATimestamp() - stateStartTime > .5){
+                manipulator.hold();
+                manipulator.setPivotSetPoint(75);
+                state++;
+                state++;
                 stateStartTime = Timer.getFPGATimestamp();
-                //
             }
         }
         else if(state == 2){ //waits half a second so that the cone can drop before pulling the extendor in

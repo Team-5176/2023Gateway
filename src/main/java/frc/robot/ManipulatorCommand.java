@@ -37,20 +37,20 @@ public class ManipulatorCommand extends CommandBase{
         SmartDashboard.putNumber("test???", 74);
         SmartDashboard.putNumber("Designate step", designateStep);
 
-        if(Robot.m_controller.getRawButton(Constants.SUCK_IN)){
+        if(Robot.m_copilot_controller.getRawButton(Constants.SUCK_IN)){
             manipulator.suckIn();
         }
-        else if(Robot.m_controller.getRawButton(Constants.PUSH_OUT)){
+        else if(Robot.m_copilot_controller.getRawButton(Constants.PUSH_OUT)){
             manipulator.pushOut();
         }
         else{
             manipulator.hold();
         }
 
-        if(Robot.m_controller.getRawButton(Constants.PIVOT_OUT)){
+        if(Robot.m_copilot_controller.getRawButton(Constants.PIVOT_OUT)){
             manipulator.pivotOut(.1);
         }
-        else if(Robot.m_controller.getRawButton(Constants.PIVOT_IN)){
+        else if(Robot.m_copilot_controller.getRawButton(Constants.PIVOT_IN)){
             manipulator.pivotIn(.1);
         }
         else{
