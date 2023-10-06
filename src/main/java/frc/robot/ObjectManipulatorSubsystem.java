@@ -60,7 +60,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     }
 
     public void pushOut(){
-        LWheelsNeo.set(-.25);
+        LWheelsNeo.set(-.5);
         RWheelsNeo.set(-.25);
 
     }
