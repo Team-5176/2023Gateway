@@ -131,7 +131,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     //orch.play();
-    driveWithJoystick(true);
+    driveWithJoystick(false);
     double angle = m_swerve.getHeading();
     isAuto = false;
     m_swerve.updateOdometry();
@@ -156,7 +156,7 @@ public class Robot extends TimedRobot {
     }  else if(m_controller.getLeftY() < -Constants.CONTROLLER_DRIVE_DEADZONE){
       response = (m_controller.getLeftY() + Constants.CONTROLLER_DRIVE_DEADZONE);
     }
-    return -response;
+    return response;
   }
   private double getLeftX(){
     double response = 0;
@@ -165,7 +165,7 @@ public class Robot extends TimedRobot {
     }  else if(m_controller.getLeftX() < -Constants.CONTROLLER_DRIVE_DEADZONE){
       response = (m_controller.getLeftX() + Constants.CONTROLLER_DRIVE_DEADZONE);
     }
-    return -response;
+    return response;
   }
 
   private void driveWithJoystick(boolean fieldRelative) {
@@ -185,8 +185,8 @@ public class Robot extends TimedRobot {
     var rot = -m_rotLimiter.calculate(m_controller.getRightX()) * Drivetrain.kMaxAngularSpeed;
 
     if(!Constants.IS_BLUE){
-      xSpeed = xSpeed;
-      ySpeed = ySpeed;
+      xSpeed = -xSpeed;
+      ySpeed = -ySpeed;
     }
     m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative);
     
