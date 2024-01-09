@@ -32,8 +32,8 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
 
     private final ProfiledPIDController PivotPIDController = 
         new ProfiledPIDController(
-            3.0,
-            0.0,
+            2.0,
+            0.1,
             0.0,
             new TrapezoidProfile.Constraints(
                 1, 5));
@@ -60,7 +60,7 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
     }
 
     public void pushOut(){
-        LWheelsNeo.set(-.25);
+        LWheelsNeo.set(-.5);
         RWheelsNeo.set(-.25);
 
     }
@@ -109,10 +109,10 @@ public class ObjectManipulatorSubsystem extends SubsystemBase{
 
     public void periodic(){
         
-
+        pivotSetPoint = 150;
         double PivotPid = PivotPIDController.calculate(getPivotPos(), pivotSetPoint);
 
-        if(Robot.isAuto){
+        if(Robot.isAuto == true){
             PivotNeo.set(PivotPid);
         }
 

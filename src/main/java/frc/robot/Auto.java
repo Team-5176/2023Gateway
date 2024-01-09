@@ -104,16 +104,16 @@ public class Auto extends CommandBase{
         //SmartDashboard.putNumber("navx raw heading", Robot.m_swerve.navx.getAngle());
         
 
-        if(true){
+        if(Constants.AUTO == 1){
             auto1();
         }
          
-       /* else if(Constants.AUTO == 2){
+        else if(Constants.AUTO == 2){
             auto2();
         }
         else if (Constants.AUTO == 3){
             auto3();
-        } */
+        } 
         
         
         //if navx is disconnected, stop autonomous
@@ -242,30 +242,33 @@ public class Auto extends CommandBase{
     private void auto2(){
         if(state == 0){
             if(Timer.getFPGATimestamp() - stateStartTime > 1.0){
-
+                manipulator.setPivotSetPoint(150);
+                if(Timer.getFPGATimestamp() - stateStartTime > 3){
+                    state++;
+                    stateStartTime = Timer.getFPGATimestamp();
+                }
             }
         }
         else if(state == 1){
             if(Timer.getFPGATimestamp() - stateStartTime >3.0){
-                state++;
-                stateStartTime=Timer.getFPGATimestamp();
+                manipulator.pushOut();
+                if(Timer.getFPGATimestamp() - stateStartTime > 3){
+                    state++;
+                    stateStartTime = Timer.getFPGATimestamp();
+                }
             }
         }
 
        else if(state == 2){
             if(Timer.getFPGATimestamp() - stateStartTime >.5){
-
+                manipulator.hold();
                 state++;
                 stateStartTime=Timer.getFPGATimestamp();
             }
         }
 
        else if(state == 3){
-            Robot.m_swerve.matchPath((PathPlannerState)path1.sample(Timer.getFPGATimestamp() - stateStartTime));
-            if(path1.getTotalTimeSeconds() < Timer.getFPGATimestamp() - stateStartTime){ // After the path has been completed, close the grabber
-                state ++;
-                stateStartTime = Timer.getFPGATimestamp();
-            }
+            state++;
 
         }
         else{
