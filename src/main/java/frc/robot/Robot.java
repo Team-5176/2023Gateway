@@ -185,8 +185,8 @@ public class Robot extends TimedRobot {
     var rot = -m_rotLimiter.calculate(m_controller.getRightX()) * Drivetrain.kMaxAngularSpeed;
 
     if(!Constants.IS_BLUE){
-      xSpeed = -xSpeed;
-      ySpeed = -ySpeed;
+      xSpeed = xSpeed;
+      ySpeed = ySpeed;
     }
     m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative);
     
